@@ -80,10 +80,88 @@ A locator for arcade games worldwide. Users can search for a game, and a map wil
 ### [BONUS] Interactive Prototype
 
 ## Schema 
-[This section will be completed in Unit 9]
 ### Models
-[Add table of models]
+#### Game Location
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the game location (default field) |
+   | author        | Pointer to User | author of game location |
+   | address     | String | address of game |
+   | image         | File     | image that user posts of a game |
+   | description       | String   | description / notes by author |
+   | gameDescription | String | description of game, pulled from wikipedia |
+   | commentsCount | Number   | number of comments that has been posted to an image |
+   | createdAt     | DateTime | date when post is created (default field) |
+   | updatedAt     | DateTime | date when post is last updated (default field) |
+   | verified     | boolean | true if location is verified to be displayed on map, false otherwise |
+
+#### User
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the user (default field) |
+   | username        | String | image author |
+   | password         | String     | user password |
+   | profilePic       | File   | user profile picture |
+   | joined | DateTime   | date user created profile |
+   | requests | Array of pointers to requests  | list of requests for game locations user has made |
+   | isDev      | boolean   | unique id for the user (default field) |
+
+#### Report
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the report (default field) |
+   | author        | Pointer to User | author of report |
+   | post         | Pointer to Game Location or Comment    | unique id of reported game location or comment |
+   | description       | String   | description of report |
+   | approved     | boolean | true if report is confirmed, false otherwise |
+   | reportType    | String | either comment or game |
+
+#### Comment
+ Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the user post (default field) |
+   | author        | Pointer to User | author of comment |
+   | contents     | String | contents of comment |
+   | attachments         | File     | attachments to comment |
+   | likes       | integer   | number of likes in comment |
+   | replies | Array of comment pointers   | list of comments that have been replied to this one |
+   | createdAt     | DateTime | date when comments was created (default field) |
+   | edited     | boolean | true if comment has been edited, false otherwise |
+
 ### Networking
-- [Add list of network requests by screen ]
-- [Create basic snippets for each Parse network request]
+#### List of network requests by screen
+
+- Home Map Screen 
+    - (Create/POST) Create a request for a new location or to update a location
+    - (Read/GET) Get all the game locations to display on the map
+        ```java
+        ParseQuery<Location> query = ParseQuery.getQuery(Location.class);
+        // include data referred by address
+        query.include(Location.KEY_ADDRESS);
+        // start an asynchronous call for addresses
+        query.findInBackground(new FindCallback<Location>() {
+            @Override
+            public void done(List<Location> posts, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting Locations", e);
+                    return;
+                }
+                // TODO: Process locations
+            }
+        });
+        ```
+- Game information Screen
+    - (Create/POST) Create a comment under this game
+    - (Create/POST) Like and report comments
+    - (Create/POST) Create a game report
+    - (Create/POST) If user is author of game location, they can create a request for an update or for deletion
+    - (Read/GET) Query game description from Wikipedia API
+    - (Read/GET) Display all existing comment and comment information
+    - (Update/PUT) User can update their existing comments
+    - (Delete) Delete a comment
+- Profile Screen
+    - (Read/GET) Read user information
+    - (Update/PUT) User can update profile info, including username, password, and profile image
+    - (Delete) User can delete their account
 - [OPTIONAL: List endpoints if using existing API such as Yelp]
