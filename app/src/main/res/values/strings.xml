@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">ArcadeFinder</string>
+    <string name="register_here"><u>Register Here.</u></string>
+    <string name="not_registered">Not registered?</string>
+    <string name="button">Button</string>
+    <string name="password">password</string>
+    <string name="textview">TextView</string>
+    <string name="username">username</string>
+    <string name="tvUsername">TextView</string>
+    <string name="login">Login</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
