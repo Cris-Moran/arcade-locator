@@ -10,6 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Add the jitpack library
+        maven { url "https://jitpack.io" }
     }
 }
 rootProject.name = "arcade-locator"

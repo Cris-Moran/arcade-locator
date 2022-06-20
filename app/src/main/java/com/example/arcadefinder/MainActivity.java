@@ -26,9 +26,16 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
                 switch (item.getItemId()) {
-
-                    default:
+                    case R.id.action_map:
                         fragment = new MapFragment();
+                        break;
+                    case R.id.action_upload:
+                        fragment = new UploadFragment();
+                        break;
+                    case R.id.action_profile:
+                    default:
+                        // TODO: make profile fragment
+                        fragment = new UploadFragment();
                         break;
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
