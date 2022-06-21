@@ -1,4 +1,13 @@
 package com.example.arcadefinder;
 
-public class User {
+import com.parse.ParseClassName;
+import com.parse.ParseUser;
+
+
+@ParseClassName("User")
+public class User extends ParseUser {
+
+    public User() {
+    }
+
 }
