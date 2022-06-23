@@ -14,20 +14,41 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class ProfileViewModel extends AndroidViewModel {
-    private static final String TAG = "ProfileViewModel";
+public class ProfileViewModel extends ViewModel {
+    private final String TAG = getClass().getSimpleName();
 
     // 4 - Live data
-    MutableLiveData<ParseUser> mutableLiveData;
+    private UserRepo userRepo;
+    public MutableLiveData<String> mutableLiveUsername;
+    public MutableLiveData<ParseFile> mutableLivePfp;
 
-    public ProfileViewModel(@NonNull Application application) {
-        super(application);
-        mutableLiveData = new MutableLiveData<>();
+    public ProfileViewModel() {
+        userRepo = new UserRepo();
     }
 
-    public void getUser() {
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        mutableLiveData.setValue(currentUser);
+    public LiveData<String> getUsername() {
+        if (mutableLiveUsername == null) {
+            mutableLiveUsername = userRepo.getUsername();
+        }
+        return mutableLiveUsername;
+    }
+
+    public LiveData<ParseFile> getPfp() {
+        if (mutableLivePfp == null) {
+            mutableLivePfp = userRepo.getPfp();
+        }
+        return mutableLivePfp;
+    }
+
+    public void setPfp(ParseFile parseFile) {
+        ParseFile result = userRepo.setPfp(parseFile);
+        if (result != null) {
+            mutableLivePfp.setValue(result);
+        }
+    }
+
+    public void logOut() {
+        userRepo.logOut();
     }
 
 }

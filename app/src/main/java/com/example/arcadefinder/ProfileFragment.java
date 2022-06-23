@@ -43,15 +43,13 @@ import java.io.File;
  */
 public class ProfileFragment extends Fragment {
 
-    public static final int IMAGE_PICK_CODE = 1000;
-    public static final int PERMISSION_CODE = 1001;
     public static final String TAG = "ProfileFragment";
 
     TextView tvProfileUsername;
     ImageView ivProfileImage;
     Button btnChangePfp;
     Button btnLogout;
-    ParseUser currentUser;
+//    ParseUser currentUser;
     ProfileViewModel profileViewModel;
 
     public ProfileFragment() {
@@ -61,7 +59,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//         Inflate the layout for this fragment
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -77,7 +75,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "onClick logout button");
-                ParseUser.logOut();
+                profileViewModel.logOut();
                 Intent i = new Intent(getContext(), LoginActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // this makes sure the Back button won't work
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // same as above
@@ -93,9 +91,7 @@ public class ProfileFragment extends Fragment {
                     if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                         // permission not granted
                         String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
-//                        requestPermissions(permissions, PERMISSION_CODE);
                         requestPermissionForResult.launch(permission);
-                        // TODO: Remove deprecated method
                     } else {
                         // permission already granted
                         pickImageFromGallery();
@@ -108,32 +104,51 @@ public class ProfileFragment extends Fragment {
         });
 
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-        profileViewModel.mutableLiveData.observe(getViewLifecycleOwner(), new Observer<ParseUser>() {
+//        profileViewModel.mutableLiveData.observe(getViewLifecycleOwner(), new Observer<ParseUser>() {
+//            @Override
+//            public void onChanged(ParseUser parseUser) {
+//                // Any change in the live data, executed by getUser()
+//                Log.i(TAG, "onChanged parseUser");
+//                tvProfileUsername.setText(parseUser.getUsername());
+//                ParseFile profileImg = parseUser.getParseFile("profileImage");
+//                if (profileImg != null) {
+//                    Glide.with(getContext()).load(profileImg.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+//                } else {
+//                    Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
+//                }
+//                currentUser = parseUser;
+//            }
+//        });
+//        profileViewModel.getUser();
+        profileViewModel.getUsername().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
-            public void onChanged(ParseUser parseUser) {
-                // Any change in the live data, executed by getUser()
-                Log.i(TAG, "onChanged parseUser");
-                tvProfileUsername.setText(parseUser.getUsername());
-                ParseFile profileImg = parseUser.getParseFile("profileImage");
-                if (profileImg != null) {
-                    Glide.with(getContext()).load(profileImg.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+            public void onChanged(String username) {
+                Log.i(TAG, "onChanged username");
+                tvProfileUsername.setText(username);
+            }
+        });
+        profileViewModel.getPfp().observe(getViewLifecycleOwner(), new Observer<ParseFile>() {
+            @Override
+            public void onChanged(ParseFile parseFile) {
+                Log.i(TAG, "onChanged parseFile");
+                Log.i(TAG, "onChanged: parsefile is: " + parseFile);
+                if (parseFile != null) {
+                    Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 } else {
                     Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
                 }
-                currentUser = parseUser;
             }
         });
-        profileViewModel.getUser();
     }
-
-    private void getProfileImage() {
-        ParseFile profileImg = currentUser.getParseFile("profileImage");
-        if (profileImg != null) {
-            Glide.with(getContext()).load(profileImg.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
-        } else {
-            Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
-        }
-    }
+//
+//    private void getProfileImage() {
+//        ParseFile profileImg = currentUser.getParseFile("profileImage");
+//        if (profileImg != null) {
+//            Glide.with(getContext()).load(profileImg.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+//        } else {
+//            Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
+//        }
+//    }
 
     private void pickImageFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -159,19 +174,7 @@ public class ProfileFragment extends Fragment {
                 cursor.close();
                 File image = new File(mCurrentPhotoPath);
                 ParseFile pf = new ParseFile(image);
-                currentUser.put("profileImage", pf);
-                currentUser.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e != null) {
-                            Log.e(TAG, "Error while saving", e);
-                            Toast.makeText(getContext(), "Error while saving!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Toast.makeText(getContext(), "Image saved successfully!", Toast.LENGTH_SHORT).show();
-                        getProfileImage();
-                    }
-                });
+                profileViewModel.setPfp(pf);
             }
         }
     });
