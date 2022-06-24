@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.arcadefinder.Models.ProfileModel;
+import com.example.arcadefinder.ViewModels.ProfileViewModel;
 import com.parse.ParseFile;
 
 import java.io.File;
@@ -117,30 +119,50 @@ public class ProfileFragment extends Fragment {
 //            }
 //        });
 //        profileViewModel.getUser();
-        profileViewModel.getUsername().observe(getViewLifecycleOwner(), new Observer<String>() {
+//        profileViewModel.getUsername().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(String username) {
+//                Log.i(TAG, "onChanged username. Username is: " + username);
+//                tvProfileUsername.setText(username);
+//            }
+//        });
+//
+//        profileViewModel.getUrl().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(String url) {
+//                // Hack: display photo using local path
+//                Glide.with(getContext()).load(url).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+//            }
+//        });
+//
+//        profileViewModel.getPfp().observe(getViewLifecycleOwner(), new Observer<ParseFile>() {
+//            @Override
+//            public void onChanged(ParseFile parseFile) {
+//                if (parseFile != null && parseFile.getUrl() != null) {
+//                    Log.i(TAG, "onChanged: parsefile is: " + parseFile.getUrl());
+//                    Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+//                } else {
+//                    Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
+//                }
+//            }
+//        });
+        profileViewModel.getProfile().observe(getViewLifecycleOwner(), new Observer<ProfileModel>() {
             @Override
-            public void onChanged(String username) {
-                Log.i(TAG, "onChanged username. Username is: " + username);
+            public void onChanged(ProfileModel profileModel) {
+                String username = profileModel.getUsername();
+                String url = profileModel.getProfileImagePath();
+                ParseFile parseFile = profileModel.getProfileImage();
+
                 tvProfileUsername.setText(username);
-            }
-        });
-
-        profileViewModel.getUrl().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String url) {
-                // Hack: display photo using local path
-                Glide.with(getContext()).load(url).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
-            }
-        });
-
-        profileViewModel.getPfp().observe(getViewLifecycleOwner(), new Observer<ParseFile>() {
-            @Override
-            public void onChanged(ParseFile parseFile) {
                 if (parseFile != null && parseFile.getUrl() != null) {
+                    // Loading image from database if exists
                     Log.i(TAG, "onChanged: parsefile is: " + parseFile.getUrl());
                     Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
-                } else {
+                } else if (url == null) {
+                    // Default image
                     Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
+                } else {
+                    Glide.with(getContext()).load(url).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 }
             }
         });
@@ -161,7 +183,6 @@ public class ProfileFragment extends Fragment {
         startCameraForResult.launch(intent);
     }
 
-    // TODO: Is this good practice?
     ActivityResultLauncher<Intent> startCameraForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {

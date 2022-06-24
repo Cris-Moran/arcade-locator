@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.arcadefinder.ViewModels.LoginViewModel;
 import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
@@ -59,8 +60,10 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(TAG, "onClick login button");
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
-                loginViewModel.logIn(username, password);
-                goMainActivity();
+                boolean loggedIn = loginViewModel.logIn(username, password);
+                if (loggedIn) {
+                    goMainActivity();
+                }
             }
         });
 

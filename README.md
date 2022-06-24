@@ -53,7 +53,7 @@ A locator for arcade games worldwide. Users can search for a game, and a map wil
 * Upload
     * Users can upload a location for a game to developers for review.
 * Profile
-    * User can see information on who they are and settings for their profile.
+    * User can see information on who they are and settings for their profileModel.
 
 ### 3. Navigation
 
@@ -101,8 +101,8 @@ A locator for arcade games worldwide. Users can search for a game, and a map wil
    | objectId      | String   | unique id for the user (default field) |
    | username        | String | image author |
    | password         | String     | user password |
-   | profilePic       | File   | user profile picture |
-   | joined | DateTime   | date user created profile |
+   | profilePic       | File   | user profileModel picture |
+   | joined | DateTime   | date user created profileModel |
    | requests | Array of pointers to requests  | list of requests for game locations user has made |
    | isDev      | boolean   | unique id for the user (default field) |
 
@@ -162,6 +162,6 @@ A locator for arcade games worldwide. Users can search for a game, and a map wil
     - (Delete) Delete a comment
 - Profile Screen
     - (Read/GET) Read user information
-    - (Update/PUT) User can update profile info, including username, password, and profile image
+    - (Update/PUT) User can update profileModel info, including username, password, and profileModel image
     - (Delete) User can delete their account
 - [OPTIONAL: List endpoints if using existing API such as Yelp]
