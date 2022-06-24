@@ -31,10 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.io.File;
 
@@ -125,14 +122,16 @@ public class ProfileFragment extends Fragment {
             public void onChanged(String username) {
                 Log.i(TAG, "onChanged username");
                 tvProfileUsername.setText(username);
+                // Hack: display photo using local path
+                Glide.with(getContext()).load(username).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
             }
         });
+
         profileViewModel.getPfp().observe(getViewLifecycleOwner(), new Observer<ParseFile>() {
             @Override
             public void onChanged(ParseFile parseFile) {
-                Log.i(TAG, "onChanged parseFile");
-                Log.i(TAG, "onChanged: parsefile is: " + parseFile);
-                if (parseFile != null) {
+                if (parseFile != null && parseFile.getUrl() != null) {
+                    Log.i(TAG, "onChanged: parsefile is: " + parseFile.getUrl());
                     Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 } else {
                     Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
@@ -175,6 +174,7 @@ public class ProfileFragment extends Fragment {
                 File image = new File(mCurrentPhotoPath);
                 ParseFile pf = new ParseFile(image);
                 profileViewModel.setPfp(pf);
+                profileViewModel.setUrl(mCurrentPhotoPath);
             }
         }
     });
