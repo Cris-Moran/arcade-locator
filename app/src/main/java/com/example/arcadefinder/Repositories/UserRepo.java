@@ -44,16 +44,6 @@ public class UserRepo {
         ParseUser newUser = new ParseUser();
         newUser.setUsername(username);
         newUser.setPassword(password);
-//        newUser.signUpInBackground(new SignUpCallback() {
-//            @Override
-//            public void done(ParseException e) {
-//                if (e != null) {
-//                    Log.e(TAG, "error while signing up: ", e);
-//                    return;
-//                }
-//                Log.i(TAG, "signed up successfully!");
-//            }
-//        });
         try {
             newUser.signUp();
             Log.i(TAG, "signed up successfully!");
@@ -65,17 +55,6 @@ public class UserRepo {
     }
 
     public boolean logIn(String username, String password) {
-//        ParseUser.logInInBackground(username, password, new LogInCallback() {
-//            @Override
-//            public void done(ParseUser user, ParseException e) {
-//                if (e != null) {
-//                    Log.e(TAG, "error while logging in: ", e);
-//                    return;
-//                }
-//                currentUser = user;
-//                Log.i(TAG, "logged in successfully!");
-//            }
-//        });
         try {
             ParseUser.logIn(username, password);
             Log.i(TAG, "logged in successfully!");

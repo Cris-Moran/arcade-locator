@@ -48,7 +48,6 @@ public class ProfileFragment extends Fragment {
     ImageView ivProfileImage;
     Button btnChangePfp;
     Button btnLogout;
-//    ParseUser currentUser;
     ProfileViewModel profileViewModel;
 
     public ProfileFragment() {
@@ -103,49 +102,6 @@ public class ProfileFragment extends Fragment {
         });
 
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-//        profileViewModel.mutableLiveData.observe(getViewLifecycleOwner(), new Observer<ParseUser>() {
-//            @Override
-//            public void onChanged(ParseUser parseUser) {
-//                // Any change in the live data, executed by getUser()
-//                Log.i(TAG, "onChanged parseUser");
-//                tvProfileUsername.setText(parseUser.getUsername());
-//                ParseFile profileImg = parseUser.getParseFile("profileImage");
-//                if (profileImg != null) {
-//                    Glide.with(getContext()).load(profileImg.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
-//                } else {
-//                    Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
-//                }
-//                currentUser = parseUser;
-//            }
-//        });
-//        profileViewModel.getUser();
-//        profileViewModel.getUsername().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(String username) {
-//                Log.i(TAG, "onChanged username. Username is: " + username);
-//                tvProfileUsername.setText(username);
-//            }
-//        });
-//
-//        profileViewModel.getUrl().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(String url) {
-//                // Hack: display photo using local path
-//                Glide.with(getContext()).load(url).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
-//            }
-//        });
-//
-//        profileViewModel.getPfp().observe(getViewLifecycleOwner(), new Observer<ParseFile>() {
-//            @Override
-//            public void onChanged(ParseFile parseFile) {
-//                if (parseFile != null && parseFile.getUrl() != null) {
-//                    Log.i(TAG, "onChanged: parsefile is: " + parseFile.getUrl());
-//                    Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
-//                } else {
-//                    Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
-//                }
-//            }
-//        });
         profileViewModel.getProfile().observe(getViewLifecycleOwner(), new Observer<ProfileModel>() {
             @Override
             public void onChanged(ProfileModel profileModel) {
@@ -167,15 +123,6 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-//
-//    private void getProfileImage() {
-//        ParseFile profileImg = currentUser.getParseFile("profileImage");
-//        if (profileImg != null) {
-//            Glide.with(getContext()).load(profileImg.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
-//        } else {
-//            Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
-//        }
-//    }
 
     private void pickImageFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);

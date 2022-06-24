@@ -37,9 +37,6 @@ public class UploadFragment extends Fragment {
     ImageView ivGamePic;
     Button btnUploadPic;
     Button btnSubmitUpload;
-    TextView tvYouAreGuest;
-
-    private ParseUser currentUser = ParseUser.getCurrentUser();
 
     public UploadFragment() {
         // Required empty public constructor
@@ -49,44 +46,11 @@ public class UploadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        if (currentUser != null) {
-            return inflater.inflate(R.layout.fragment_upload, container, false);
-        } else {
-            return inflater.inflate(R.layout.fragment_guest, container, false);
-        }
+        return inflater.inflate(R.layout.fragment_upload, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (currentUser == null) {
-            // make the text 'log in' clickable
-            tvYouAreGuest = view.findViewById(R.id.tvYouAreGuest);
-            String s = getString(R.string.you_are_a_guest_log_in_to_see_your_profile);
-            SpannableString ss = new SpannableString(s);
-
-            ClickableSpan clickableSpan = new ClickableSpan() {
-                @Override
-                public void updateDrawState(@NonNull TextPaint ds) {
-                    ds.setUnderlineText(false);
-                }
-
-                @Override
-                public void onClick(@NonNull View widget) {
-                    Intent i = new Intent(getContext(), LoginActivity.class);
-                    startActivity(i);
-                    getActivity().finish();
-                }
-            };
-
-            ss.setSpan(clickableSpan, 17, 23, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.link_blue)), 17, 23, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(new UnderlineSpan(), 17, 23, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            tvYouAreGuest.setText(ss);
-            tvYouAreGuest.setMovementMethod(LinkMovementMethod.getInstance());
-            tvYouAreGuest.setHighlightColor(Color.TRANSPARENT);
-            return;
-        }
         super.onViewCreated(view, savedInstanceState);
         etGame = view.findViewById(R.id.etGame);
         etAddress = view.findViewById(R.id.etAddress);

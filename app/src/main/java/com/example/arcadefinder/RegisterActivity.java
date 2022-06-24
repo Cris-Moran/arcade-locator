@@ -51,28 +51,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void createUser(String username, String password) {
-        ParseUser newUser = new ParseUser();
-        newUser.setUsername(username);
-        newUser.setPassword(password);
-        newUser.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    // Hooray! Let them use the app now.
-                    Log.i(TAG, "Error while signing up", e);
-                    Toast.makeText(RegisterActivity.this, "Error while signing up", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Sign up didn't succeed. Look at the ParseException
-                    // to figure out what went wrong
-                    Log.i(TAG, "Signed up successfully!", e);
-                    Toast.makeText(RegisterActivity.this, "Signed up successfully!", Toast.LENGTH_SHORT).show();
-                    goMainActivity();
-                }
-            }
-        });
-    }
-
     private void goMainActivity() {
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
