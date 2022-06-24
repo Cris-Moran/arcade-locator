@@ -31,10 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.parse.ParseException;
+import com.example.arcadefinder.ViewModels.ProfileViewModel;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.io.File;
 
@@ -60,6 +58,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -102,8 +101,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 //        profileViewModel.mutableLiveData.observe(getViewLifecycleOwner(), new Observer<ParseUser>() {
 //            @Override
 //            public void onChanged(ParseUser parseUser) {
@@ -131,16 +128,18 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onChanged(ParseFile parseFile) {
                 Log.i(TAG, "onChanged parseFile");
-                Log.i(TAG, "onChanged: parsefile is: " + parseFile);
                 if (parseFile != null) {
-                    Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+                    if (parseFile.getUrl() != null) {
+                        Log.i(TAG, "onChanged: parsefile url is : " + parseFile.getUrl());
+                        Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+                    }
                 } else {
                     Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
                 }
             }
         });
     }
-//
+
 //    private void getProfileImage() {
 //        ParseFile profileImg = currentUser.getParseFile("profileImage");
 //        if (profileImg != null) {

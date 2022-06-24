@@ -1,6 +1,8 @@
 package com.example.arcadefinder;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arcadefinder.ViewModels.LoginViewModel;
+import com.example.arcadefinder.ViewModels.ProfileViewModel;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -24,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
     TextView tvRegisterHere;
     TextView tvContinueGuest;
+    LoginViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +42,21 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         tvContinueGuest = findViewById(R.id.tvContinueGuest);
 
-        if (ParseUser.getCurrentUser() != null) {
-            Log.i(TAG, "Already logged in! User is: " + ParseUser.getCurrentUser().getUsername());
-            goMainActivity();
-        }
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        loginViewModel.getUser().observe(this, new Observer<ParseUser>() {
+            @Override
+            public void onChanged(ParseUser parseUser) {
+                if (parseUser != null) {
+                    Log.i(TAG, "Already logged in! User is: " + ParseUser.getCurrentUser().getUsername());
+                    goMainActivity();
+                }
+            }
+        });
+
+//        if (ParseUser.getCurrentUser() != null) {
+//            Log.i(TAG, "Already logged in! User is: " + ParseUser.getCurrentUser().getUsername());
+//            goMainActivity();
+//        }
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,13 +64,15 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(TAG, "onClick login button");
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
-                loginUser(username, password);
+                loginViewModel.logIn(username, password);
+                goMainActivity();
             }
         });
 
         tvRegisterHere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Go to register activity
                 Log.i(TAG, "onClick register text");
                 Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(i);
@@ -70,20 +88,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void loginUser(String username, String password) {
-        Log.i(TAG, "Attempting to login user" + username);
-        ParseUser.logInInBackground(username, password, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "Issue with login", e);
-                    return;
-                }
-                goMainActivity();
-                Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT);
-            }
-        });
-    }
+//    private void loginUser(String username, String password) {
+//        Log.i(TAG, "Attempting to login user" + username);
+//        ParseUser.logInInBackground(username, password, new LogInCallback() {
+//            @Override
+//            public void done(ParseUser user, ParseException e) {
+//                if (e != null) {
+//                    Log.e(TAG, "Issue with login", e);
+//                    return;
+//                }
+//                goMainActivity();
+//                Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT);
+//            }
+//        });
+//    }
 
     private void goMainActivity() {
         Intent i = new Intent(this, MainActivity.class);

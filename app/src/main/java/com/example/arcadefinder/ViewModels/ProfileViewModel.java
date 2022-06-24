@@ -1,18 +1,11 @@
-package com.example.arcadefinder;
+package com.example.arcadefinder.ViewModels;
 
-import android.app.Application;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.parse.ParseException;
+import com.example.arcadefinder.Repositories.UserRepo;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 public class ProfileViewModel extends ViewModel {
     private final String TAG = getClass().getSimpleName();
@@ -41,10 +34,7 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void setPfp(ParseFile parseFile) {
-        ParseFile result = userRepo.setPfp(parseFile);
-        if (result != null) {
-            mutableLivePfp.setValue(result);
-        }
+        userRepo.setPfp(parseFile);
     }
 
     public void logOut() {

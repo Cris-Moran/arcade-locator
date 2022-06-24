@@ -1,4 +1,4 @@
-package com.example.arcadefinder;
+package com.example.arcadefinder.Repositories;
 
 import android.util.Log;
 import android.widget.Toast;
@@ -68,7 +68,7 @@ public class UserRepo {
         return mutableLiveData;
     }
 
-    public ParseFile setPfp(ParseFile parseFile) {
+    public void setPfp(ParseFile parseFile) {
         ParseUser currentUser = ParseUser.getCurrentUser();
         currentUser.put("profileImage", parseFile);
         currentUser.saveInBackground(new SaveCallback() {
@@ -81,7 +81,6 @@ public class UserRepo {
                 Log.i(TAG, "set up profile image successfully!");
             }
         });
-        return parseFile;
     }
 
     public MutableLiveData<String> getUsername() {
