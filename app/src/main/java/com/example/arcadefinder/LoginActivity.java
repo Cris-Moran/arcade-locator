@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.arcadefinder.ViewModels.LoginViewModel;
 import com.parse.ParseUser;
@@ -62,7 +63,10 @@ public class LoginActivity extends AppCompatActivity {
                 String password = etPassword.getText().toString();
                 boolean loggedIn = loginViewModel.logIn(username, password);
                 if (loggedIn) {
+                    Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
                     goMainActivity();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -40,23 +40,28 @@ public class UserRepo {
         return mutableLiveData;
     }
 
-    public MutableLiveData<ParseUser> setUser(String username, String password) {
-        final MutableLiveData<ParseUser> mutableLiveData = new MutableLiveData<>();
+    public boolean registerUser(String username, String password) {
         ParseUser newUser = new ParseUser();
         newUser.setUsername(username);
         newUser.setPassword(password);
-        newUser.signUpInBackground(new SignUpCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null) {
-                    Log.e(TAG, "error while signing up: ", e);
-                    return;
-                }
-                Log.i(TAG, "signed up successfully!");
-            }
-        });
-        mutableLiveData.setValue(newUser);
-        return mutableLiveData;
+//        newUser.signUpInBackground(new SignUpCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                if (e != null) {
+//                    Log.e(TAG, "error while signing up: ", e);
+//                    return;
+//                }
+//                Log.i(TAG, "signed up successfully!");
+//            }
+//        });
+        try {
+            newUser.signUp();
+            Log.i(TAG, "signed up successfully!");
+            return true;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean logIn(String username, String password) {
@@ -73,6 +78,7 @@ public class UserRepo {
 //        });
         try {
             ParseUser.logIn(username, password);
+            Log.i(TAG, "logged in successfully!");
             return true;
         } catch (ParseException e) {
             e.printStackTrace();

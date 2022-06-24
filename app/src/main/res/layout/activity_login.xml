@@ -77,8 +77,10 @@
         android:layout_marginTop="32dp"
         android:text="@string/or_continue_as_guest"
         android:textColor="@color/link_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvRegisterHere" />
+        app:layout_constraintTop_toBottomOf="@+id/tvRegisterHere"
+        app:layout_constraintVertical_bias="0.011" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
