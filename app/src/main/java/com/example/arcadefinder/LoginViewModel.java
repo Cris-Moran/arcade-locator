@@ -1,10 +1,9 @@
-package com.example.arcadefinder.ViewModels;
+package com.example.arcadefinder;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.arcadefinder.Repositories.UserRepo;
 import com.parse.ParseUser;
 
 public class LoginViewModel extends ViewModel {
