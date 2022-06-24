@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "onClick continue as guest");
+                Toast.makeText(LoginActivity.this, "Logged in as guest", Toast.LENGTH_SHORT).show();
                 goMainActivity();
             }
         });

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -61,6 +62,7 @@ public class UploadFragment extends Fragment {
         btnSubmitUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String gameTitle = etGame.getText().toString();
                 Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
             }
         });

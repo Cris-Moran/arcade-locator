@@ -45,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = etNewPassword.getText().toString();
                 boolean registered = registerViewModel.registerUser(username, password);
                 if (registered) {
+                    Toast.makeText(RegisterActivity.this, "Registered! Welcome!", Toast.LENGTH_SHORT).show();
                     goMainActivity();
                 }
             }

@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -48,8 +49,9 @@ dependencies {
     // Glide for remote image loading
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    // Google Maps
+    // Google Maps and places
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.libraries.places:places:2.6.0'
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     // LiveData

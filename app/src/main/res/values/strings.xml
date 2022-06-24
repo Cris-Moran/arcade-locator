@@ -13,5 +13,5 @@
     <string name="logout">Logout</string>
     <string name="or_continue_as_guest"><u>Or continue as guest.</u></string>
     <string name="you_are_a_guest_log_in_to_see_your_profile">You are a guest. Log in to see your profileModel and create requests!</string>
-    <string name="google_maps_api_key">AIzaSyAiP7i2fXUEppML1w-_9HSQHlRot9y-cnA</string>
+<!--    <string name="google_maps_api_key">AIzaSyAiP7i2fXUEppML1w-_9HSQHlRot9y-cnA</string>-->
 </resources>
