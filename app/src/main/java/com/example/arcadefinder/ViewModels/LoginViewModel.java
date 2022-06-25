@@ -4,30 +4,35 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.arcadefinder.Repositories.UserRepo;
+import com.example.arcadefinder.Models.LoginModel;
+import com.example.arcadefinder.Repositories.LoginRepo;
 import com.parse.ParseUser;
 
 public class LoginViewModel extends ViewModel {
 
-    private UserRepo userRepo;
-    MutableLiveData<ParseUser> mutableLiveUser;
+    private LoginRepo loginRepo;
+    MutableLiveData<LoginModel> mutableLiveData;
 
     public LoginViewModel() {
-        userRepo = new UserRepo();
+        loginRepo = new LoginRepo();
     }
 
-    public LiveData<ParseUser> getUser() {
-        if (mutableLiveUser == null) {
-            mutableLiveUser = userRepo.getUser();
+    public LiveData<LoginModel> getUser() {
+        if (mutableLiveData == null) {
+            mutableLiveData = loginRepo.getUser();
         }
-        return mutableLiveUser;
+        return mutableLiveData;
     }
 
     public boolean logIn(String username, String password) {
-        return userRepo.logIn(username, password);
+        ParseUser loggedInUser = loginRepo.logIn(username, password);
+        LoginModel loginModel = mutableLiveData.getValue();
+        loginModel.setUser(loggedInUser);
+        mutableLiveData.postValue(loginModel);
+        if (loggedInUser == null) {
+            return false;
+        }
+        return true;
     }
 
-    private void refreshUser() {
-        mutableLiveUser = userRepo.getUser();
-    }
 }

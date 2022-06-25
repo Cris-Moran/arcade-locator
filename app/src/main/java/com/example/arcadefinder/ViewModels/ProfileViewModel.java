@@ -5,23 +5,23 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.arcadefinder.Models.ProfileModel;
-import com.example.arcadefinder.Repositories.UserRepo;
+import com.example.arcadefinder.Repositories.ProfileRepo;
 import com.parse.ParseFile;
 
 public class ProfileViewModel extends ViewModel {
     private final String TAG = getClass().getSimpleName();
 
     // 4 - Live data
-    private UserRepo userRepo;
+    private ProfileRepo profileRepo;
     public MutableLiveData<ProfileModel> mutableLiveData;
 
     public ProfileViewModel() {
-        userRepo = new UserRepo();
+        profileRepo = new ProfileRepo();
     }
 
     public LiveData<ProfileModel> getProfile() {
         if (mutableLiveData == null) {
-            mutableLiveData = userRepo.getProfile();
+            mutableLiveData = profileRepo.getProfile();
         }
         return mutableLiveData;
     }
@@ -33,7 +33,7 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void setPfp(ParseFile parseFile) {
-        ParseFile result = userRepo.setPfp(parseFile);
+        ParseFile result = profileRepo.setPfp(parseFile);
         if (result != null) {
             ProfileModel profileModel = mutableLiveData.getValue();
             profileModel.setProfileImage(parseFile);
@@ -42,7 +42,7 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void logOut() {
-        userRepo.logOut();
+        profileRepo.logOut();
     }
 
 }

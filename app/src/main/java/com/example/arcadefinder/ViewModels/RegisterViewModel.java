@@ -1,21 +1,37 @@
 package com.example.arcadefinder.ViewModels;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.arcadefinder.Repositories.UserRepo;
+import com.example.arcadefinder.Models.RegisterModel;
+import com.example.arcadefinder.Repositories.RegisterRepo;
 import com.parse.ParseUser;
 
 public class RegisterViewModel extends ViewModel {
 
-    private UserRepo userRepo;
-    public MutableLiveData<ParseUser> mutableLiveData;
+    private RegisterRepo registerRepo;
+    public MutableLiveData<RegisterModel> mutableLiveData;
 
     public RegisterViewModel() {
-        userRepo = new UserRepo();
+        registerRepo = new RegisterRepo();
+    }
+
+    public LiveData<RegisterModel> getRegisterModel() {
+        if (mutableLiveData == null) {
+            mutableLiveData = registerRepo.getRegisterModel();
+        }
+        return mutableLiveData;
     }
 
     public boolean registerUser(String username, String password) {
-        return userRepo.registerUser(username, password);
+        ParseUser registeredUser = registerRepo.registerUser(username, password);
+        RegisterModel registerModel = mutableLiveData.getValue();
+        registerModel.setUser(registeredUser);
+        mutableLiveData.postValue(registerModel);
+        if (registeredUser == null) {
+            return false;
+        }
+        return true;
     }
 }

@@ -4,20 +4,20 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.arcadefinder.Repositories.UserRepo;
-import com.parse.ParseUser;
+import com.example.arcadefinder.Models.MainModel;
+import com.example.arcadefinder.Repositories.MainRepo;
 
 public class MainViewModel extends ViewModel {
-    UserRepo userRepo;
-    MutableLiveData<ParseUser> mutableLiveData;
+    MainRepo mainRepo;
+    MutableLiveData<MainModel> mutableLiveData;
 
     public MainViewModel() {
-        userRepo = new UserRepo();
+        mainRepo = new MainRepo();
     }
 
-    public LiveData<ParseUser> getUser() {
+    public LiveData<MainModel> getUser() {
         if (mutableLiveData == null) {
-            mutableLiveData = userRepo.getUser();
+            mutableLiveData = mainRepo.getUser();
         }
         return mutableLiveData;
     }

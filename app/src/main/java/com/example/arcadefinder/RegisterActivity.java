@@ -1,6 +1,7 @@
 package com.example.arcadefinder;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.arcadefinder.Models.RegisterModel;
 import com.example.arcadefinder.ViewModels.LoginViewModel;
 import com.example.arcadefinder.ViewModels.RegisterViewModel;
 import com.parse.ParseException;
@@ -37,6 +39,17 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
 
         registerViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
+        registerViewModel.getRegisterModel().observe(this, new Observer<RegisterModel>() {
+            @Override
+            public void onChanged(RegisterModel registerModel) {
+                ParseUser user = registerModel.getUser();
+                if (user != null) {
+                    Toast.makeText(RegisterActivity.this, "Registered!", Toast.LENGTH_SHORT).show();
+                    goMainActivity();
+                }
+            }
+        });
+
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,9 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = etNewUsername.getText().toString();
                 String password = etNewPassword.getText().toString();
                 boolean registered = registerViewModel.registerUser(username, password);
-                if (registered) {
-                    Toast.makeText(RegisterActivity.this, "Registered! Welcome!", Toast.LENGTH_SHORT).show();
-                    goMainActivity();
+                if (!registered) {
+                    Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.arcadefinder.Models.MainModel;
 import com.example.arcadefinder.ViewModels.MainViewModel;
 import com.example.arcadefinder.ViewModels.RegisterViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,9 +28,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mainViewModel.getUser().observe(this, new Observer<ParseUser>() {
+        mainViewModel.getUser().observe(this, new Observer<MainModel>() {
             @Override
-            public void onChanged(ParseUser parseUser) {
+            public void onChanged(MainModel mainModel) {
+                ParseUser currentUser = mainModel.getUser();
                 bottomNavigation = findViewById(R.id.bottomNavigation);
                 bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
                     @Override
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                                 fragment = new MapFragment();
                                 break;
                             case R.id.action_upload:
-                                if (parseUser != null) {
+                                if (currentUser != null) {
                                     fragment = new UploadFragment();
                                 } else {
                                     fragment = new GuestFragment();
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case R.id.action_profile:
                             default:
-                                if (parseUser != null) {
+                                if (currentUser != null) {
                                     fragment = new ProfileFragment();
                                 } else {
                                     fragment = new GuestFragment();

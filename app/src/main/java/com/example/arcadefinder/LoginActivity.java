@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arcadefinder.Models.LoginModel;
 import com.example.arcadefinder.ViewModels.LoginViewModel;
 import com.parse.ParseUser;
 
@@ -40,11 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         tvContinueGuest = findViewById(R.id.tvContinueGuest);
 
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-        loginViewModel.getUser().observe(this, new Observer<ParseUser>() {
+        loginViewModel.getUser().observe(this, new Observer<LoginModel>() {
             @Override
-            public void onChanged(ParseUser parseUser) {
-                if (parseUser != null) {
-                    Log.i(TAG, "Already logged in! User is: " + ParseUser.getCurrentUser().getUsername());
+            public void onChanged(LoginModel loginModel) {
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                if (currentUser != null) {
+                    Log.i(TAG, "logged in! User is: " + ParseUser.getCurrentUser().getUsername());
+                    Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
                     goMainActivity();
                 }
             }
@@ -58,10 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
                 boolean loggedIn = loginViewModel.logIn(username, password);
-                if (loggedIn) {
-                    Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
-                    goMainActivity();
-                } else {
+                if (!loggedIn) {
                     Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
                 }
             }
