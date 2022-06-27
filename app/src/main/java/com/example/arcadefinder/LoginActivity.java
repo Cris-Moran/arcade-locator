@@ -44,9 +44,9 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel.getUser().observe(this, new Observer<LoginModel>() {
             @Override
             public void onChanged(LoginModel loginModel) {
-                ParseUser currentUser = ParseUser.getCurrentUser();
+                ParseUser currentUser = loginModel.getUser();
                 if (currentUser != null) {
-                    Log.i(TAG, "logged in! User is: " + ParseUser.getCurrentUser().getUsername());
+                    Log.i(TAG, "logged in! User is: " + currentUser.getUsername());
                     Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
                     goMainActivity();
                 }

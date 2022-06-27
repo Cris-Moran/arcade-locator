@@ -10,35 +10,22 @@
         android:id="@+id/tvUploadTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="44dp"
         android:text="Upload"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/etGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="game"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etAddress" />
-
     <ImageView
         android:id="@+id/ivGamePic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="36dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etGame"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:src="@tools:sample/avatars" />
 
     <Button
@@ -51,29 +38,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivGamePic" />
 
+
     <Button
         android:id="@+id/btnSubmitUpload"
         android:layout_width="165dp"
         android:layout_height="51dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="28dp"
         android:text="Submit"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnUploadPic"
-        app:layout_constraintVertical_bias="0.007" />
+        app:layout_constraintTop_toBottomOf="@+id/btnUploadPic" />
 
-    <EditText
-        android:id="@+id/etAddress"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="address"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUploadTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tvUploadTitle">
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/material_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:strokeColor="@color/black"
+            app:strokeWidth="1dip">
+
+            <fragment
+                android:id="@+id/fragmentAddress"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <EditText
+            android:id="@+id/etGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:hint="game"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="description"
+            android:inputType="textMultiLine" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
