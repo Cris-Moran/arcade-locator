@@ -1,11 +1,9 @@
 package com.example.arcadefinder;
 
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -15,45 +13,24 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.Map;
 
@@ -64,8 +41,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public final String TAG = getClass().getSimpleName();
 
-    private GoogleMap mMap;
+    private GoogleMap map;
     boolean haveLocationPermission = false;
+    private Location currentLocation;
+//    private Location prevLocation;
+    private LatLngBounds bounds;
     FusedLocationProviderClient fusedLocationProviderClient;
 
     public MapFragment() {
@@ -83,9 +63,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+        fusedLocationProviderClient = getFusedLocationProviderClient(getContext());
 
-        getCurrentLocation();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         assert supportMapFragment != null;
@@ -103,37 +82,67 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     @Override
-    @SuppressLint("MissingPermission")
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        map = googleMap;
+        checkPermissions();
 //         Add a marker in Sydney and move the camera
-        if (haveLocationPermission) {
+        if (haveLocationPermission && map != null) {
             getCurrentLocation();
-            LatLng sydney = new LatLng(-33.852, 151.211);
-            mMap.addMarker(new MarkerOptions()
-                    .position(sydney)
-                    .title("Marker in Sydney"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
         } else {
             // TODO: Handle if no permission
+            LatLng sydney = new LatLng(-33.852, 151.211);
+            map.addMarker(new MarkerOptions()
+                    .position(sydney)
+                    .title("Marker in Sydney"));
+            map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         }
-//        mMap.setMyLocationEnabled(true);
     }
 
+    @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
         // TODO: Move to a Repo
         // TODO: Do I have to write this twice?
-        checkPermissions();
-        ApplicationInfo info = null;
-        try {
-            info = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+
+        if (haveLocationPermission) {
+            map.setMyLocationEnabled(true);
+            map.getUiSettings().setMyLocationButtonEnabled(true);
         }
-        Bundle bundle = info.metaData;
-        String apiKey = bundle.getString("com.google.android.geo.API_KEY");
+
+        // Imported?
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
+        locationClient.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        onLocationChanged(location);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.d("MapFragment", "Error trying to get last GPS location");
+                    e.printStackTrace();
+                });
+    }
+
+    public void onLocationChanged(Location location) {
+        // GPS may be turned off
+        if (location == null) {
+            return;
+        }
+        else if (currentLocation != location) {
+            currentLocation = location;
+            displayLocation();
+        }
+        if (bounds == null) { //initialize
+            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            bounds = new LatLngBounds(latLng, latLng);
+        }
+    }
+
+    private void displayLocation() {
+        if (currentLocation != null) {
+            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 30);
+            map.animateCamera(cameraUpdate);
+        }
     }
 
     private void checkPermissions() {
