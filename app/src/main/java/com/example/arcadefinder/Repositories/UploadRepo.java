@@ -15,13 +15,26 @@ public class UploadRepo {
 
     public final String TAG = getClass().getSimpleName();
 
-    public MutableLiveData<UploadModel> createRequest(ParseGeoPoint location, String gameTitle, ParseFile image, String description) {
+    public UploadModel createRequest(ParseGeoPoint location, String gameTitle, ParseFile image, String description) {
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        saveRequest(location, gameTitle, image, description, currentUser);
+        MutableLiveData<UploadModel> mutableLiveData = new MutableLiveData<>();
+        UploadModel uploadModel = new UploadModel();
+        uploadModel.setImage(image);
+        uploadModel.setLocation(location);
+        uploadModel.setTitle(gameTitle);
+        uploadModel.setDescription(description);
+        uploadModel.setAuthor(currentUser);
+        uploadModel.setIsVerified(false);
+        return uploadModel;
+    }
+
+    private void saveRequest(ParseGeoPoint location, String gameTitle, ParseFile image, String description, ParseUser currentUser) {
         Request request = new Request();
         request.setImage(image);
         request.setLocation(location);
         request.setTitle(gameTitle);
         request.setDescription(description);
-        ParseUser currentUser = ParseUser.getCurrentUser();
         request.setAuthor(currentUser);
         request.setIsVerified(false);
         try {
@@ -30,16 +43,6 @@ public class UploadRepo {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        MutableLiveData<UploadModel> mutableLiveData = new MutableLiveData<>();
-        UploadModel uploadModel = new UploadModel();
-        uploadModel.setImage(image);
-        uploadModel.setLocation(location);
-        uploadModel.setTitle(gameTitle);
-        uploadModel.setDescription(description);
-        uploadModel.setAuthor(currentUser);
-        uploadModel.setVerified(false);
-        mutableLiveData.setValue(uploadModel);
-        return mutableLiveData;
     }
 
     public MutableLiveData<UploadModel> getUpload() {

@@ -1,5 +1,6 @@
 package com.example.arcadefinder.ViewModels;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -18,20 +19,15 @@ public class UploadViewModel extends ViewModel {
     }
 
     public void createUpload(ParseGeoPoint location, String gameTitle, ParseFile image, String description) {
-        uploadRepo.createRequest(location, gameTitle, image, description);
-        UploadModel uploadModel = new UploadModel();
-        uploadModel.setLocation(location);
-        uploadModel.setTitle(gameTitle);
-        uploadModel.setImage(image);
-        uploadModel.setDescription(description);
-        mutableLiveData.postValue(uploadModel);
+        mutableLiveData.setValue(uploadRepo.createRequest(location, gameTitle, image, description));
     }
 
-    public MutableLiveData<UploadModel> getUpload() {
+    public LiveData<UploadModel> getUpload() {
         if (mutableLiveData == null) {
             mutableLiveData = new MutableLiveData<>();
             mutableLiveData = uploadRepo.getUpload();
         }
         return mutableLiveData;
     }
+
 }

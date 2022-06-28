@@ -1,15 +1,22 @@
 package com.example.arcadefinder;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationRequest;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -25,6 +32,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,12 +51,25 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
+
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+
+    public final String TAG = getClass().getSimpleName();
+
     private GoogleMap mMap;
+//    PlacesClient placesClient;
+    boolean haveLocationPermission = false;
+    private Location currentLocation;
+    private SupportMapFragment mapFragment;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     public MapFragment() {
         // Required empty public constructor
@@ -57,10 +84,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
         super.onViewCreated(view, savedInstanceState);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+
+//        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(MapFragment.this);
+
+        getCurrentLocation();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        assert supportMapFragment != null;
+        supportMapFragment.getMapAsync(MapFragment.this);
     }
 
     /**
@@ -74,14 +109,83 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     @Override
+    @SuppressLint("MissingPermission")
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//         Add a marker in Sydney and move the camera
+        if (haveLocationPermission) {
+            getCurrentLocation();
+            LatLng sydney = new LatLng(-33.852, 151.211);
+            mMap.addMarker(new MarkerOptions()
+                    .position(sydney)
+                    .title("Marker in Sydney"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        } else {
+            // TODO: Handle if no permission
+        }
+//        mMap.setMyLocationEnabled(true);
     }
+
+    private void getCurrentLocation() {
+        // TODO: Move to a Repo
+        // TODO: Do I have to write this twice?
+        checkPermissions();
+        ApplicationInfo info = null;
+        try {
+            info = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        Bundle bundle = info.metaData;
+        String apiKey = bundle.getString("com.google.android.geo.API_KEY");
+
+        if (!Places.isInitialized()) {
+            Places.initialize(getActivity().getApplicationContext(), apiKey);
+        }
+
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+//        if (haveLocationPermission) {
+//            Task<Location> task = fusedLocationProviderClient.getLastLocation();
+//            task.addOnSuccessListener(new OnSuccessListener<Location>() {
+//                @Override
+//                public void onSuccess(Location location) {
+//                    if (location != null) {
+//                        currentLocation = location;
+//                        Toast.makeText(getContext(), (int) currentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
+//                        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+//                        assert supportMapFragment != null;
+//                        supportMapFragment.getMapAsync(MapFragment.this);
+//                    }
+//                }
+//            });
+//        } else {
+//            // TODO: Handle case where user has no permission
+//        }
+    }
+
+    private void checkPermissions() {
+        // TODO: Should I check for both permissions? Or only one?
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // No location permissions, need to request them
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            requestLocation.launch(permissions);
+        } else {
+            // Already have permission
+            haveLocationPermission = true;
+        }
+    }
+
+    ActivityResultLauncher<String[]> requestLocation = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+        @Override
+        public void onActivityResult(Map<String, Boolean> result) {
+            Log.i(TAG, "onActivityResult: " + result);
+            if (result.get(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Log.i(TAG, "onActivityResult: got location permission");
+                getCurrentLocation();
+                haveLocationPermission = true;
+            }
+        }
+    });
 }

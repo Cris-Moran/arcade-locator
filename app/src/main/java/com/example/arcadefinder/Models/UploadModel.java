@@ -45,11 +45,11 @@ public class UploadModel {
         this.description = description;
     }
 
-    public boolean isVerified() {
+    public boolean getIsVerified() {
         return verified;
     }
 
-    public void setVerified(boolean verified) {
+    public void setIsVerified(boolean verified) {
         this.verified = verified;
     }
 

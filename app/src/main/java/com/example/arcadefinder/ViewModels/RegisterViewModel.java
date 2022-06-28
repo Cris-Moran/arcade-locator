@@ -28,7 +28,7 @@ public class RegisterViewModel extends ViewModel {
         ParseUser registeredUser = registerRepo.registerUser(username, password);
         RegisterModel registerModel = mutableLiveData.getValue();
         registerModel.setUser(registeredUser);
-        mutableLiveData.postValue(registerModel);
+        mutableLiveData.setValue(registerModel);
         if (registeredUser == null) {
             return false;
         }

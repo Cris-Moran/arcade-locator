@@ -29,7 +29,7 @@ public class ProfileViewModel extends ViewModel {
     public void setUrl(String url) {
         ProfileModel profileModel = mutableLiveData.getValue();
         profileModel.setProfileImagePath(url);
-        mutableLiveData.postValue(profileModel);
+        mutableLiveData.setValue(profileModel);
     }
 
     public void setPfp(ParseFile parseFile) {
@@ -37,7 +37,7 @@ public class ProfileViewModel extends ViewModel {
         if (result != null) {
             ProfileModel profileModel = mutableLiveData.getValue();
             profileModel.setProfileImage(parseFile);
-            mutableLiveData.postValue(profileModel);
+            mutableLiveData.setValue(profileModel);
         }
     }
 

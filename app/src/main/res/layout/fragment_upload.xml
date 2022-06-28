@@ -10,7 +10,7 @@
         android:id="@+id/tvUploadTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="20dp"
         android:text="Upload"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,31 +19,32 @@
 
     <ImageView
         android:id="@+id/ivGamePic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="24dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:src="@tools:sample/avatars" />
+
 
     <Button
         android:id="@+id/btnUploadPic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="Upload Image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivGamePic" />
 
-
     <Button
         android:id="@+id/btnSubmitUpload"
         android:layout_width="165dp"
         android:layout_height="51dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="12dp"
         android:text="Submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,9 +54,10 @@
         android:id="@+id/linearLayout"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="28dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvUploadTitle">
 
@@ -93,7 +95,8 @@
             android:ems="10"
             android:gravity="start|top"
             android:hint="description"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:maxLength="150" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

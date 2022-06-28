@@ -127,10 +127,10 @@ public class ProfileFragment extends Fragment {
     private void pickImageFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startCameraForResult.launch(intent);
+        startGalleryForResult.launch(intent);
     }
 
-    ActivityResultLauncher<Intent> startCameraForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    ActivityResultLauncher<Intent> startGalleryForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result != null && result.getResultCode() == RESULT_OK) {

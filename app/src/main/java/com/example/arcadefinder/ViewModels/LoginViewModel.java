@@ -28,7 +28,7 @@ public class LoginViewModel extends ViewModel {
         ParseUser loggedInUser = loginRepo.logIn(username, password);
         LoginModel loginModel = mutableLiveData.getValue();
         loginModel.setUser(loggedInUser);
-        mutableLiveData.postValue(loginModel);
+        mutableLiveData.setValue(loginModel);
         if (loggedInUser == null) {
             return false;
         }
