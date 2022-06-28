@@ -65,10 +65,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public final String TAG = getClass().getSimpleName();
 
     private GoogleMap mMap;
-//    PlacesClient placesClient;
     boolean haveLocationPermission = false;
-    private Location currentLocation;
-    private SupportMapFragment mapFragment;
     FusedLocationProviderClient fusedLocationProviderClient;
 
     public MapFragment() {
@@ -87,9 +84,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-
-//        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(MapFragment.this);
 
         getCurrentLocation();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -140,29 +134,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         Bundle bundle = info.metaData;
         String apiKey = bundle.getString("com.google.android.geo.API_KEY");
-
-        if (!Places.isInitialized()) {
-            Places.initialize(getActivity().getApplicationContext(), apiKey);
-        }
-
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-//        if (haveLocationPermission) {
-//            Task<Location> task = fusedLocationProviderClient.getLastLocation();
-//            task.addOnSuccessListener(new OnSuccessListener<Location>() {
-//                @Override
-//                public void onSuccess(Location location) {
-//                    if (location != null) {
-//                        currentLocation = location;
-//                        Toast.makeText(getContext(), (int) currentLocation.getLatitude(), Toast.LENGTH_SHORT).show();
-//                        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-//                        assert supportMapFragment != null;
-//                        supportMapFragment.getMapAsync(MapFragment.this);
-//                    }
-//                }
-//            });
-//        } else {
-//            // TODO: Handle case where user has no permission
-//        }
     }
 
     private void checkPermissions() {
