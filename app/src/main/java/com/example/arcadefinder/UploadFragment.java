@@ -3,8 +3,6 @@ package com.example.arcadefinder;
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -19,7 +17,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +28,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.arcadefinder.Models.UploadModel;
 import com.example.arcadefinder.ViewModels.UploadViewModel;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 
@@ -46,7 +38,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,9 +54,9 @@ public class UploadFragment extends Fragment {
     Button btnSubmitUpload;
     UploadViewModel uploadViewModel;
     File file;
-    LatLng gameLatLng;
-    String locationName;
-    String locationAddress;
+    static LatLng coordinates;
+    static String locationName;
+    static String address;
 
     public UploadFragment() {
         // Required empty public constructor
@@ -99,6 +90,7 @@ public class UploadFragment extends Fragment {
                         && uploadModel.getDescription() != null && uploadModel.getImage() != null
                         && uploadModel.getAuthor() != null) {
                     Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
+                    resetAddressVariables();
                 }
             }
         });
@@ -109,9 +101,9 @@ public class UploadFragment extends Fragment {
                 String gameTitle = etGame.getText().toString();
                 String description = etDescription.getText().toString();
                 ParseFile image = new ParseFile(file);
-                ParseGeoPoint location = new ParseGeoPoint(gameLatLng.latitude, gameLatLng.longitude);
+                ParseGeoPoint location = new ParseGeoPoint(coordinates.latitude, coordinates.longitude);
 
-                uploadViewModel.createUpload(location, locationName, locationAddress, gameTitle, description, image);
+                uploadViewModel.createUpload(location, locationName, address, gameTitle, description, image);
             }
         });
 
@@ -123,46 +115,14 @@ public class UploadFragment extends Fragment {
             }
         });
 
-        // TODO: Move to Upload Repo
-//        ApplicationInfo info = null;
-//        try {
-//            info = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        Bundle bundle = info.metaData;
-//        String apiKey = bundle.getString("com.google.android.geo.API_KEY");
-//
-//        /**
-//         * Initialize Places. For simplicity, the API key is hard-coded. In a production
-//         * environment we recommend using a secure mechanism to manage API keys.
-//         */
-//        if (!Places.isInitialized()) {
-//            Places.initialize(getActivity().getApplicationContext(), apiKey);
-//        }
+        uploadViewModel.initPlaces(getContext());
+        uploadViewModel.initSearchBar(fragmentAddress);
+    }
 
-        // Create a new Places client instance.
-//        PlacesClient placesClient = Places.createClient(getContext());
-
-        fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
-
-        fragmentAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                gameLatLng = place.getLatLng();
-                locationName = place.getName();
-                locationAddress = place.getAddress();
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
-
+    private void resetAddressVariables() {
+        coordinates = null;
+        locationName = null;
+        address = null;
     }
 
     ActivityResultLauncher<Intent> launchCameraForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -211,5 +171,15 @@ public class UploadFragment extends Fragment {
         }
     });
 
+    public static void setCoordinates(LatLng latLng) {
+        coordinates = latLng;
+    }
 
+    public static void setLocationName(String string) {
+        locationName = string;
+    }
+
+    public static void setAddress(String string) {
+        address = string;
+    }
 }
