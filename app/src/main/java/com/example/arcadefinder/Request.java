@@ -8,64 +8,81 @@ import com.parse.ParseUser;
 
 @ParseClassName("Request")
 public class Request extends ParseObject {
-    public static final String KEY_IMAGE = "image";
-    public static final String KEY_ADDRESS = "location";
+    public static final String KEY_COORDINATES = "coordinates";
+    public static final String KEY_LOCATION_NAME = "locationName";
+    public static final String KEY_ADDRESS = "address";
     public static final String KEY_TITLE = "title";
     public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_IMAGE = "image";
     public static final String KEY_AUTHOR = "author";
     public static final String KEY_VERIFIED = "verified";
 
-    // TODO: Should this be my repo? Or should the repo query this
 
     public Request() {
     }
 
-    public ParseFile getImage() {
-        return getParseFile(KEY_IMAGE);
+    public ParseGeoPoint getCoordinates() {
+        return getParseGeoPoint(KEY_COORDINATES);
     }
 
-    public void setImage(ParseFile parseFile) {
-        put(KEY_IMAGE, parseFile);
+    public void setCoordinates(ParseGeoPoint parseGeoPoint) {
+        put(KEY_COORDINATES, parseGeoPoint);
     }
 
-    public ParseGeoPoint getLocation() {
-        return getParseGeoPoint(KEY_ADDRESS);
+    public String getLocationName() {
+        return getString(KEY_LOCATION_NAME);
     }
 
-    public void setLocation(ParseGeoPoint parseGeoPoint) {
-        put(KEY_ADDRESS, parseGeoPoint);
+    public void setLocationName(String locationName) {
+        put(KEY_LOCATION_NAME, locationName);
+    }
+
+    public String getAddress() {
+        return getString(KEY_ADDRESS);
+    }
+
+    public void setAddress(String address) {
+        put(KEY_ADDRESS, address);
     }
 
     public String getTitle() {
         return getString(KEY_TITLE);
     }
 
-    public void setTitle(String string) {
-        put(KEY_TITLE, string);
+    public void setTitle(String title) {
+        put(KEY_TITLE, title);
     }
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
     }
 
-    public void setDescription(String string) {
-        put(KEY_DESCRIPTION, string);
+    public void setDescription(String description) {
+        put(KEY_DESCRIPTION, description);
+    }
+
+    public ParseFile getImage() {
+        return getParseFile(KEY_IMAGE);
+    }
+
+    public void setImage(ParseFile image) {
+        put(KEY_IMAGE, image);
     }
 
     public ParseUser getAuthor() {
         return getParseUser(KEY_AUTHOR);
     }
 
-    public void setAuthor(ParseUser parseUser) {
-        put(KEY_AUTHOR, parseUser);
-    }
-
-    public void setIsVerified(boolean bool) {
-        put(KEY_VERIFIED, bool);
+    public void setAuthor(ParseUser author) {
+        put(KEY_AUTHOR, author);
     }
 
     public boolean getIsVerified() {
         return getBoolean(KEY_VERIFIED);
+    }
+
+    public void setIsVerified(boolean verified) {
+        put(KEY_VERIFIED, verified);
     }
 
 }

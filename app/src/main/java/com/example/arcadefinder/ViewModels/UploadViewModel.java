@@ -18,8 +18,8 @@ public class UploadViewModel extends ViewModel {
         uploadRepo = new UploadRepo();
     }
 
-    public void createUpload(ParseGeoPoint location, String gameTitle, ParseFile image, String description) {
-        mutableLiveData.setValue(uploadRepo.createRequest(location, gameTitle, image, description));
+    public void createUpload(ParseGeoPoint location, String locationName, String address, String gameTitle, String description, ParseFile image) {
+        mutableLiveData.setValue(uploadRepo.createRequest(location, locationName, address, gameTitle, description, image));
     }
 
     public LiveData<UploadModel> getUpload() {

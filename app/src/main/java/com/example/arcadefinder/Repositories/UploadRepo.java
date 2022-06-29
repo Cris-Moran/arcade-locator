@@ -15,26 +15,30 @@ public class UploadRepo {
 
     public final String TAG = getClass().getSimpleName();
 
-    public UploadModel createRequest(ParseGeoPoint location, String gameTitle, ParseFile image, String description) {
+    public UploadModel createRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image) {
         ParseUser currentUser = ParseUser.getCurrentUser();
-        saveRequest(location, gameTitle, image, description, currentUser);
+        saveRequest(coordinates, locationName, address, gameTitle, description, image, currentUser);
         MutableLiveData<UploadModel> mutableLiveData = new MutableLiveData<>();
         UploadModel uploadModel = new UploadModel();
-        uploadModel.setImage(image);
-        uploadModel.setLocation(location);
+        uploadModel.setCoordinates(coordinates);
+        uploadModel.setLocationName(locationName);
+        uploadModel.setAddress(address);
         uploadModel.setTitle(gameTitle);
         uploadModel.setDescription(description);
+        uploadModel.setImage(image);
         uploadModel.setAuthor(currentUser);
         uploadModel.setIsVerified(false);
         return uploadModel;
     }
 
-    private void saveRequest(ParseGeoPoint location, String gameTitle, ParseFile image, String description, ParseUser currentUser) {
+    private void saveRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser currentUser) {
         Request request = new Request();
-        request.setImage(image);
-        request.setLocation(location);
+        request.setCoordinates(coordinates);
+        request.setLocationName(locationName);
+        request.setAddress(address);
         request.setTitle(gameTitle);
         request.setDescription(description);
+        request.setImage(image);
         request.setAuthor(currentUser);
         request.setIsVerified(false);
         try {

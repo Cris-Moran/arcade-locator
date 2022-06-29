@@ -5,6 +5,8 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -33,6 +35,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -87,6 +92,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map = googleMap;
         checkPermissions();
 //         Add a marker in Sydney and move the camera
+        placeMarker(37.32448278280634, -121.81384195966514);
     }
 
     /**
@@ -137,6 +143,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    private void placeMarker(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        List<Address> addressData = null;
+        try {
+            addressData = geocoder.getFromLocation(lat, lng, 2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (addressData != null) {
+            String address = addressData.get(0).getAddressLine(0);
+            LatLng markerLocation = new LatLng(lat, lng);
+            map.addMarker(new MarkerOptions().position(markerLocation).title(address));
+        } else {
+            Toast.makeText(getContext(), "Error while saving marker", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void checkPermissions() {
         // TODO: Should I check for both permissions? Or only one?

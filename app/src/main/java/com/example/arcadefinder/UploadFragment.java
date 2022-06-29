@@ -40,7 +40,6 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -65,7 +64,8 @@ public class UploadFragment extends Fragment {
     UploadViewModel uploadViewModel;
     File file;
     LatLng gameLatLng;
-
+    String locationName;
+    String locationAddress;
 
     public UploadFragment() {
         // Required empty public constructor
@@ -94,7 +94,10 @@ public class UploadFragment extends Fragment {
         uploadViewModel.getUpload().observe(getViewLifecycleOwner(), new Observer<UploadModel>() {
             @Override
             public void onChanged(UploadModel uploadModel) {
-                if (uploadModel.getAuthor() != null && uploadModel.getDescription() != null && uploadModel.getImage() != null && uploadModel.getLocation() != null && uploadModel.getTitle() != null) {
+                if (uploadModel.getCoordinates() != null && uploadModel.getLocationName() != null
+                        && uploadModel.getAddress() != null && uploadModel.getTitle() != null
+                        && uploadModel.getDescription() != null && uploadModel.getImage() != null
+                        && uploadModel.getAuthor() != null) {
                     Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -108,7 +111,7 @@ public class UploadFragment extends Fragment {
                 ParseFile image = new ParseFile(file);
                 ParseGeoPoint location = new ParseGeoPoint(gameLatLng.latitude, gameLatLng.longitude);
 
-                uploadViewModel.createUpload(location, gameTitle, image, description);
+                uploadViewModel.createUpload(location, locationName, locationAddress, gameTitle, description, image);
             }
         });
 
@@ -121,25 +124,25 @@ public class UploadFragment extends Fragment {
         });
 
         // TODO: Move to Upload Repo
-        ApplicationInfo info = null;
-        try {
-            info = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        Bundle bundle = info.metaData;
-        String apiKey = bundle.getString("com.google.android.geo.API_KEY");
-
-        /**
-         * Initialize Places. For simplicity, the API key is hard-coded. In a production
-         * environment we recommend using a secure mechanism to manage API keys.
-         */
-        if (!Places.isInitialized()) {
-            Places.initialize(getActivity().getApplicationContext(), apiKey);
-        }
+//        ApplicationInfo info = null;
+//        try {
+//            info = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        Bundle bundle = info.metaData;
+//        String apiKey = bundle.getString("com.google.android.geo.API_KEY");
+//
+//        /**
+//         * Initialize Places. For simplicity, the API key is hard-coded. In a production
+//         * environment we recommend using a secure mechanism to manage API keys.
+//         */
+//        if (!Places.isInitialized()) {
+//            Places.initialize(getActivity().getApplicationContext(), apiKey);
+//        }
 
         // Create a new Places client instance.
-        PlacesClient placesClient = Places.createClient(getContext());
+//        PlacesClient placesClient = Places.createClient(getContext());
 
         fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
 
@@ -149,6 +152,8 @@ public class UploadFragment extends Fragment {
                 // TODO: Get info about the selected place.
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
                 gameLatLng = place.getLatLng();
+                locationName = place.getName();
+                locationAddress = place.getAddress();
             }
 
             @Override
