@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -86,27 +87,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map = googleMap;
         checkPermissions();
 //         Add a marker in Sydney and move the camera
-        if (haveLocationPermission && map != null) {
-            getCurrentLocation();
-        } else {
-            // TODO: Handle if no permission
-            LatLng sydney = new LatLng(-33.852, 151.211);
-            map.addMarker(new MarkerOptions()
-                    .position(sydney)
-                    .title("Marker in Sydney"));
-            map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        }
     }
 
+    /**
+     * Only call if permission was granted
+     */
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
         // TODO: Move to a Repo
         // TODO: Do I have to write this twice?
 
-        if (haveLocationPermission) {
-            map.setMyLocationEnabled(true);
-            map.getUiSettings().setMyLocationButtonEnabled(true);
-        }
+        map.setMyLocationEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(true);
 
         // Imported?
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
@@ -140,10 +132,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void displayLocation() {
         if (currentLocation != null) {
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 30);
-            map.animateCamera(cameraUpdate);
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
+            map.moveCamera(cameraUpdate);
         }
     }
+
 
     private void checkPermissions() {
         // TODO: Should I check for both permissions? Or only one?
@@ -153,8 +146,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             requestLocation.launch(permissions);
         } else {
             // Already have permission
-            haveLocationPermission = true;
+            getCurrentLocation();
         }
+    }
+
+    /**
+     * Call if permission was not granted
+     */
+    private void getDefaultLocation() {
+        LatLng sydney = new LatLng(-33.852, 151.211);
+        map.addMarker(new MarkerOptions()
+                .position(sydney)
+                .title("Marker in Sydney"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     ActivityResultLauncher<String[]> requestLocation = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
@@ -164,7 +168,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             if (result.get(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.i(TAG, "onActivityResult: got location permission");
                 getCurrentLocation();
-                haveLocationPermission = true;
+            } else {
+                // Permission was denied
+                Toast.makeText(getContext(), "Permission was denied", Toast.LENGTH_SHORT).show();
+                getDefaultLocation();
             }
         }
     });
