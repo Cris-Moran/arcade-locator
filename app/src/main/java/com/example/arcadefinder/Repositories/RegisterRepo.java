@@ -8,6 +8,7 @@ import com.example.arcadefinder.Models.MainModel;
 import com.example.arcadefinder.Models.RegisterModel;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class RegisterRepo {
 
@@ -19,17 +20,22 @@ public class RegisterRepo {
         return mutableLiveData;
     }
 
-    public ParseUser registerUser(String username, String password) {
+    public void registerUser(String username, String password, MutableLiveData<RegisterModel> mutableLiveData) {
         ParseUser newUser = new ParseUser();
         newUser.setUsername(username);
         newUser.setPassword(password);
-        try {
-            newUser.signUp();
-            Log.i(TAG, "signed up successfully!");
-            return ParseUser.getCurrentUser();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+        newUser.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.i(TAG, "signed up successfully!");
+                    RegisterModel registerModel = mutableLiveData.getValue();
+                    registerModel.setUser(ParseUser.getCurrentUser());
+                    mutableLiveData.setValue(registerModel);
+                } else {
+                    Log.e(TAG, "error while signing up: ", e);
+                }
+            }
+        });
     }
 }

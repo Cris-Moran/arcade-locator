@@ -24,14 +24,7 @@ public class RegisterViewModel extends ViewModel {
         return mutableLiveData;
     }
 
-    public boolean registerUser(String username, String password) {
-        ParseUser registeredUser = registerRepo.registerUser(username, password);
-        RegisterModel registerModel = mutableLiveData.getValue();
-        registerModel.setUser(registeredUser);
-        mutableLiveData.setValue(registerModel);
-        if (registeredUser == null) {
-            return false;
-        }
-        return true;
+    public void registerUser(String username, String password) {
+        registerRepo.registerUser(username, password, mutableLiveData);
     }
 }

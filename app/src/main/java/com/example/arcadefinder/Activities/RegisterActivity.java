@@ -24,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText etNewPassword;
     Button btnRegister;
     RegisterViewModel registerViewModel;
+    boolean firstObservation = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,11 @@ public class RegisterActivity extends AppCompatActivity {
                 if (user != null) {
                     Toast.makeText(RegisterActivity.this, "Registered!", Toast.LENGTH_SHORT).show();
                     goMainActivity();
+                } else if (firstObservation) {
+                    // When activity is created user will be null, don't want to say failed to register
+                    firstObservation = false;
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -52,10 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String username = etNewUsername.getText().toString();
                 String password = etNewPassword.getText().toString();
-                boolean registered = registerViewModel.registerUser(username, password);
-                if (!registered) {
-                    Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
-                }
+                registerViewModel.registerUser(username, password);
             }
         });
     }

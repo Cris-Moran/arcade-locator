@@ -24,15 +24,8 @@ public class LoginViewModel extends ViewModel {
         return mutableLiveData;
     }
 
-    public boolean logIn(String username, String password) {
-        ParseUser loggedInUser = loginRepo.logIn(username, password);
-        LoginModel loginModel = mutableLiveData.getValue();
-        loginModel.setUser(loggedInUser);
-        mutableLiveData.setValue(loginModel);
-        if (loggedInUser == null) {
-            return false;
-        }
-        return true;
+    public void logIn(String username, String password) {
+        loginRepo.logIn(username, password, mutableLiveData);
     }
 
 }

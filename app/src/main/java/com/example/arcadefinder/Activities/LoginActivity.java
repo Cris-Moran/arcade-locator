@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvRegisterHere;
     TextView tvContinueGuest;
     LoginViewModel loginViewModel;
+    boolean firstObservation = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,12 @@ public class LoginActivity extends AppCompatActivity {
                     Log.i(TAG, "logged in! User is: " + currentUser.getUsername());
                     Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
                     goMainActivity();
+                } else if (firstObservation) {
+                    // Activity has been created, don't want to say failed to log in
+                    firstObservation = false;
+                } else {
+                    // Failed to log in
+                    Toast.makeText(LoginActivity.this, "Failed to log in", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -61,10 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(TAG, "onClick login button");
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
-                boolean loggedIn = loginViewModel.logIn(username, password);
-                if (!loggedIn) {
-                    Toast.makeText(LoginActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-                }
+                loginViewModel.logIn(username, password);
             }
         });
 
