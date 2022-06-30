@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -87,22 +88,25 @@ public class UploadFragment extends Fragment {
         btnSubmitUpload = view.findViewById(R.id.btnSubmitUpload);
 
         ivGamePic.setImageResource(R.drawable.placeholderimg);
-//        Glide.with(getContext()).load(R.drawable.placeholderimg).into(ivGamePic);
 
         uploadViewModel = new ViewModelProvider(this).get(UploadViewModel.class);
         uploadViewModel.getUpload().observe(getViewLifecycleOwner(), new Observer<UploadModel>() {
             @Override
             public void onChanged(UploadModel uploadModel) {
-                locationName = uploadModel.getLocationName();
-                address = uploadModel.getAddress();
-                boolean submitted = uploadModel.getStatus();
-                if (submitted) {
-                    Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
-                    // Reload current fragment
-                    fragmentAddress.setText("");
-                    etGame.getText().clear();
-                    etDescription.getText().clear();
-                    ivGamePic.setImageResource(R.drawable.placeholderimg);
+                if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                    locationName = uploadModel.getLocationName();
+                    address = uploadModel.getAddress();
+                    boolean submitted = uploadModel.getStatus();
+                    if (submitted) {
+                        Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
+                        // Reload current fragment
+                        fragmentAddress.setText("");
+                        etGame.getText().clear();
+                        etDescription.getText().clear();
+                        ivGamePic.setImageResource(R.drawable.placeholderimg);
+                    } else {
+                        Toast.makeText(getContext(), "Error submitting request", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -112,8 +116,8 @@ public class UploadFragment extends Fragment {
             public void onClick(View v) {
                 String gameTitle = etGame.getText().toString();
                 String description = etDescription.getText().toString();
-                if (file == null || coordinates == null) {
-                    Toast.makeText(getContext(), "Error while submitting", Toast.LENGTH_SHORT).show();
+                if (file == null || coordinates == null || gameTitle.equals("") || description.equals("")) {
+                    Toast.makeText(getContext(), "Please fill out all fields before submitting", Toast.LENGTH_SHORT).show();
                 } else {
                     ParseFile image = new ParseFile(file);
                     ParseGeoPoint location = new ParseGeoPoint(coordinates.latitude, coordinates.longitude);

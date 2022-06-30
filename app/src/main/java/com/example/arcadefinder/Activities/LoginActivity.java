@@ -1,6 +1,7 @@
 package com.example.arcadefinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -47,16 +48,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onChanged(LoginModel loginModel) {
                 ParseUser currentUser = loginModel.getUser();
-                if (currentUser != null) {
-                    Log.i(TAG, "logged in! User is: " + currentUser.getUsername());
-                    Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
-                    goMainActivity();
-                } else if (firstObservation) {
-                    // Activity has been created, don't want to say failed to log in
-                    firstObservation = false;
-                } else {
-                    // Failed to log in
-                    Toast.makeText(LoginActivity.this, "Failed to log in", Toast.LENGTH_SHORT).show();
+                if (getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                    if (currentUser != null) {
+                        Log.i(TAG, "logged in! User is: " + currentUser.getUsername());
+                        Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
+                        goMainActivity();
+                    } else if (firstObservation) {
+                        // Activity has been created, don't want to say failed to log in
+                        firstObservation = false;
+                    } else {
+                        // Failed to log in
+                        Toast.makeText(LoginActivity.this, "Failed to log in", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

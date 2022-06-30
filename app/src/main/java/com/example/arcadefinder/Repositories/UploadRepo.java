@@ -15,28 +15,14 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class UploadRepo {
 
     public final String TAG = getClass().getSimpleName();
 
-    public UploadModel createRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image) {
+    public void createRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, MutableLiveData<UploadModel> mutableLiveData) {
         ParseUser currentUser = ParseUser.getCurrentUser();
-        boolean status = saveRequest(coordinates, locationName, address, gameTitle, description, image, currentUser);
-        UploadModel uploadModel = new UploadModel();
-        uploadModel.setCoordinates(coordinates);
-        uploadModel.setLocationName(locationName);
-        uploadModel.setAddress(address);
-        uploadModel.setTitle(gameTitle);
-        uploadModel.setDescription(description);
-        uploadModel.setImage(image);
-        uploadModel.setAuthor(currentUser);
-        uploadModel.setIsVerified(false);
-        uploadModel.setStatus(status);
-        return uploadModel;
-    }
-
-    private boolean saveRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser currentUser) {
         GameLocation request = new GameLocation();
         request.setCoordinates(coordinates);
         request.setLocationName(locationName);
@@ -46,14 +32,32 @@ public class UploadRepo {
         request.setImage(image);
         request.setAuthor(currentUser);
         request.setIsVerified(false);
-        try {
-            request.save();
-            Log.i(TAG, "createRequest: Request saved successfully");
-            return true;
-        } catch (ParseException e) {
-            Log.e(TAG, "saveRequest: Issue with saving request: ", e);
-            return false;
-        }
+        request.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    updateModel(coordinates, locationName, address, gameTitle, description, image, currentUser, true, mutableLiveData);
+                    Log.i(TAG, "createRequest: Request saved successfully");
+                } else {
+                    Log.e(TAG, "saveRequest: Issue with saving request: ", e);
+                    updateModel(null, null, null, null, null, null, null, false, mutableLiveData);
+                }
+            }
+        });
+    }
+
+    private void updateModel(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser author, boolean status, MutableLiveData<UploadModel> mutableLiveData) {
+        UploadModel uploadModel = mutableLiveData.getValue();
+        uploadModel.setCoordinates(coordinates);
+        uploadModel.setLocationName(locationName);
+        uploadModel.setAddress(address);
+        uploadModel.setTitle(gameTitle);
+        uploadModel.setDescription(description);
+        uploadModel.setImage(image);
+        uploadModel.setAuthor(author);
+        uploadModel.setIsVerified(false);
+        uploadModel.setStatus(status);
+        mutableLiveData.setValue(uploadModel);
     }
 
     public MutableLiveData<UploadModel> getUpload() {
