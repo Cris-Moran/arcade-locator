@@ -22,9 +22,11 @@ public class ProfileRepo {
 
         String username = currentUser.getUsername();
         ParseFile profileImage = currentUser.getParseFile("profileImage");
+        boolean isAdmin = currentUser.getBoolean("isAdmin");
 
         profileModel.setUsername(username);
         profileModel.setProfileImage(profileImage);
+        profileModel.setIsAdmin(isAdmin);
 
         mutableLiveData.setValue(profileModel);
         return mutableLiveData;

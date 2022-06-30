@@ -11,7 +11,7 @@ public class ParseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ParseObject.registerSubclass(Request.class);
+        ParseObject.registerSubclass(GameLocation.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("imBrAnlrYaBogOvZXBVJuwk3Q8r90F4Ei8SN7gyt")
