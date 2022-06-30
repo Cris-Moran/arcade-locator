@@ -86,7 +86,8 @@ public class UploadFragment extends Fragment {
         btnUploadPic = view.findViewById(R.id.btnUploadPic);
         btnSubmitUpload = view.findViewById(R.id.btnSubmitUpload);
 
-        Glide.with(getContext()).load(R.drawable.placeholderimg).into(ivGamePic);
+        ivGamePic.setImageResource(R.drawable.placeholderimg);
+//        Glide.with(getContext()).load(R.drawable.placeholderimg).into(ivGamePic);
 
         uploadViewModel = new ViewModelProvider(this).get(UploadViewModel.class);
         uploadViewModel.getUpload().observe(getViewLifecycleOwner(), new Observer<UploadModel>() {
@@ -129,7 +130,7 @@ public class UploadFragment extends Fragment {
             }
         });
 
-        uploadViewModel.initPlaces(getContext());
+        uploadViewModel.initPlaces();
 
         fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
         fragmentAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {

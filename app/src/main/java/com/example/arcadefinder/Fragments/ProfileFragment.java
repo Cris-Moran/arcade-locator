@@ -137,8 +137,9 @@ public class ProfileFragment extends Fragment {
                     Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 } else if (url == null) {
                     // Default image
-                    Glide.with(getContext()).load(R.drawable.defaultpfp).into(ivProfileImage);
+                    ivProfileImage.setImageResource(R.drawable.defaultpfp);
                 } else {
+                    // Updated pfp
                     Glide.with(getContext()).load(url).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 }
             }

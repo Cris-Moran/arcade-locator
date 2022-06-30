@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.arcadefinder.Adapters.CustomWindowAdapter;
+import com.example.arcadefinder.GameLocation;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.MapViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -35,6 +37,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.SaveCallback;
 
 import java.io.IOException;
 import java.util.List;
@@ -92,7 +97,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map = googleMap;
         checkPermissions();
 //         Add a marker in Sydney and move the camera
-        placeMarker(37.32448278280634, -121.81384195966514);
+        map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            // Coordinates have been passed in
+            GameLocation gameLocation = bundle.getParcelable("gameLocation");
+            ParseGeoPoint coordinates = gameLocation.getCoordinates();
+            double lat = coordinates.getLatitude();
+            double lng = coordinates.getLongitude();
+            String locationName = gameLocation.getLocationName();
+            String address = gameLocation.getAddress();
+            placeMarker(lat, lng, locationName, address);
+            gameLocation.setIsVerified(true);
+            gameLocation.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Log.i(TAG, "done: successfully verified location");
+                    } else {
+                        Log.e(TAG, "done: error verifying location", e);
+                    }
+                }
+            });
+//        placeMarker(37.32448278280634, -121.81384195966514);
+        }
     }
 
     /**
@@ -146,21 +174,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void placeMarker(double lat, double lng) {
-        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-        List<Address> addressData = null;
-        try {
-            addressData = geocoder.getFromLocation(lat, lng, 2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (addressData != null) {
-            String address = addressData.get(0).getAddressLine(0);
-            LatLng markerLocation = new LatLng(lat, lng);
-            map.addMarker(new MarkerOptions().position(markerLocation).title(address));
-        } else {
-            Toast.makeText(getContext(), "Error while saving marker", Toast.LENGTH_SHORT).show();
-        }
+    public void placeMarker(double lat, double lng, String locationName, String address) {
+        LatLng markerLocation = new LatLng(lat, lng);
+        map.addMarker(new MarkerOptions().position(markerLocation).title(locationName).snippet(address));
     }
 
     public void checkPermissions() {
