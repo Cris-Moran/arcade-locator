@@ -14,6 +14,7 @@ public class UploadModel {
     private ParseFile image;
     private boolean isVerified;
     private ParseUser author;
+    private boolean status;
 
 
     public ParseGeoPoint getCoordinates() {
@@ -80,4 +81,11 @@ public class UploadModel {
         this.isVerified = verified;
     }
 
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 }

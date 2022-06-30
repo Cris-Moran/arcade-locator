@@ -9,19 +9,12 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.arcadefinder.Models.UploadModel;
-import com.example.arcadefinder.Request;
-import com.example.arcadefinder.UploadFragment;
-import com.google.android.gms.common.api.Status;
+import com.example.arcadefinder.GameLocation;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
-
-import java.util.Arrays;
 
 public class UploadRepo {
 
@@ -29,8 +22,7 @@ public class UploadRepo {
 
     public UploadModel createRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image) {
         ParseUser currentUser = ParseUser.getCurrentUser();
-        saveRequest(coordinates, locationName, address, gameTitle, description, image, currentUser);
-        MutableLiveData<UploadModel> mutableLiveData = new MutableLiveData<>();
+        boolean status = saveRequest(coordinates, locationName, address, gameTitle, description, image, currentUser);
         UploadModel uploadModel = new UploadModel();
         uploadModel.setCoordinates(coordinates);
         uploadModel.setLocationName(locationName);
@@ -40,11 +32,12 @@ public class UploadRepo {
         uploadModel.setImage(image);
         uploadModel.setAuthor(currentUser);
         uploadModel.setIsVerified(false);
+        uploadModel.setStatus(status);
         return uploadModel;
     }
 
-    private void saveRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser currentUser) {
-        Request request = new Request();
+    private boolean saveRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser currentUser) {
+        GameLocation request = new GameLocation();
         request.setCoordinates(coordinates);
         request.setLocationName(locationName);
         request.setAddress(address);
@@ -56,8 +49,10 @@ public class UploadRepo {
         try {
             request.save();
             Log.i(TAG, "createRequest: Request saved successfully");
+            return true;
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(TAG, "saveRequest: Issue with saving request: ", e);
+            return false;
         }
     }
 
@@ -89,23 +84,4 @@ public class UploadRepo {
         Places.createClient(context);
     }
 
-    public void initSearchBar(AutocompleteSupportFragment fragmentAddress) {
-        fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
-        fragmentAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                UploadFragment.setCoordinates(place.getLatLng());
-                UploadFragment.setLocationName(place.getName());
-                UploadFragment.setAddress(place.getAddress());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
-    }
 }

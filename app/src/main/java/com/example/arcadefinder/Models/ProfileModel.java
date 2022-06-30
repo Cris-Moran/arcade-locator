@@ -1,14 +1,6 @@
 package com.example.arcadefinder.Models;
 
-import android.util.Log;
-import android.widget.Toast;
-
-import com.example.arcadefinder.RegisterActivity;
-import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 
 public class ProfileModel {
@@ -16,6 +8,7 @@ public class ProfileModel {
     private String username;
     private ParseFile profileImage;
     private String profileImagePath;
+    private boolean isAdmin;
 
     public String getUsername() {
         return username;
@@ -41,4 +34,11 @@ public class ProfileModel {
         this.profileImagePath = profileImagePath;
     }
 
+    public boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 }
