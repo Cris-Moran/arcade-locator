@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -56,8 +57,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap map;
     private Location currentLocation;
     private LatLngBounds bounds;
-    MapViewModel mapViewModel;
     FusedLocationProviderClient fusedLocationProviderClient;
+    SearchView searchView;
+    MapViewModel mapViewModel;
 
     public MapFragment() {
         // Required empty public constructor
@@ -74,12 +76,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        searchView = view.findViewById(R.id.searchView);
+
         fusedLocationProviderClient = getFusedLocationProviderClient(getContext());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(MapFragment.this);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Query should be a game, followed by radius
+                Log.i(TAG, "onQueryTextSubmit: " + query);
+                // Query name of game from database, filter by name and isVerified
+                // TODO: Might want to filter by city, state, or country also depending on the radius
+                ParseGeoPoint currentCoords = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLatitude());
+                // Check all the returned locations, display marker if in radius of the current location, otherwise do not display it
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -96,7 +118,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         checkPermissions();
-//         Add a marker in Sydney and move the camera
+
         map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -119,7 +141,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     }
                 }
             });
-//        placeMarker(37.32448278280634, -121.81384195966514);
         }
     }
 

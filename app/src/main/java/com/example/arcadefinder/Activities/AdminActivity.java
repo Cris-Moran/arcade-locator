@@ -54,13 +54,6 @@ public class AdminActivity extends AppCompatActivity {
         ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
         // include data referred by user key
         query.include(GameLocation.KEY_AUTHOR);
-        // for endless scrolling: if we are extending the feed than skip the first 20
-//        if (extendingFeed) {
-//            offset += 20;
-//            query.setSkip(offset);
-//        } else {
-//            query.setSkip(0);
-//        }
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)

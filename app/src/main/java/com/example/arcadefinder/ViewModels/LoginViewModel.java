@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.arcadefinder.Models.LoginModel;
 import com.example.arcadefinder.Repositories.LoginRepo;
-import com.parse.ParseUser;
 
 public class LoginViewModel extends ViewModel {
 
@@ -17,9 +16,9 @@ public class LoginViewModel extends ViewModel {
         loginRepo = new LoginRepo();
     }
 
-    public LiveData<LoginModel> getUser() {
+    public LiveData<LoginModel> getLoginModel() {
         if (mutableLiveData == null) {
-            mutableLiveData = loginRepo.getUser();
+            mutableLiveData = loginRepo.getLoginModel();
         }
         return mutableLiveData;
     }

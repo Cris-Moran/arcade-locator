@@ -29,7 +29,7 @@ public class LoginRepo {
         });
     }
 
-    public MutableLiveData<LoginModel> getUser() {
+    public MutableLiveData<LoginModel> getLoginModel() {
         final MutableLiveData<LoginModel> mutableLiveData = new MutableLiveData<>();
         LoginModel loginModel = new LoginModel();
         ParseUser parseUser = ParseUser.getCurrentUser();
