@@ -28,8 +28,10 @@ public class MapRepo {
         query.whereWithinMiles(GameLocation.KEY_COORDINATES, currentLocation, radius);
         // get only locations that are verified
         query.whereEqualTo(GameLocation.KEY_VERIFIED, true);
+        // get locations with the correct title
+        query.whereEqualTo(GameLocation.KEY_TITLE, gameTitle);
         // limit query to latest 50 items
-        query.setLimit(50);
+        query.setLimit(20);
         // start an asynchronous call for locations
         query.findInBackground(new FindCallback<GameLocation>() {
             @Override

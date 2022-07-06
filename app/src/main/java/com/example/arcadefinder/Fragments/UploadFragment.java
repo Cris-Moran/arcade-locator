@@ -93,6 +93,7 @@ public class UploadFragment extends Fragment {
         uploadViewModel.getUpload().observe(getViewLifecycleOwner(), new Observer<UploadModel>() {
             @Override
             public void onChanged(UploadModel uploadModel) {
+                // https://stackoverflow.com/a/60285340
                 if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
                     locationName = uploadModel.getLocationName();
                     address = uploadModel.getAddress();

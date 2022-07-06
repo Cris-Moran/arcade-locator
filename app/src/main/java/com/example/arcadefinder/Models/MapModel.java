@@ -8,16 +8,17 @@ import java.util.Map;
 
 public class MapModel {
 
-//    private GoogleMap map;
     private List<GameLocation> locationList;
+    private boolean locationPermission;
 
-//    public GoogleMap getMap() {
-//        return map;
-//    }
-//
-//    public void setMap(GoogleMap map) {
-//        this.map = map;
-//    }
+
+    public boolean getLocationPermission() {
+        return locationPermission;
+    }
+
+    public void setLocationPermission(boolean locationPermission) {
+        this.locationPermission = locationPermission;
+    }
 
     public List<GameLocation> getLocationList() {
         return locationList;

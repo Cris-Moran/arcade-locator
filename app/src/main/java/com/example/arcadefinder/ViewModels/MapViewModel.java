@@ -16,6 +16,10 @@ public class MapViewModel extends ViewModel {
     MapRepo mapRepo;
     MutableLiveData<MapModel> mutableLiveData;
 
+    public MapViewModel() {
+        mapRepo = new MapRepo();
+    }
+
     public LiveData<MapModel> getMapModel() {
         if (mutableLiveData == null) {
             mutableLiveData = mapRepo.getMapModel();
@@ -25,5 +29,11 @@ public class MapViewModel extends ViewModel {
 
     public void queryLocations(String gameTitle, double radius, ParseGeoPoint currentLocation) {
         mapRepo.queryLocations(gameTitle, radius, currentLocation, mutableLiveData);
+    }
+
+    public void setLocationPermission(boolean b) {
+        MapModel mapModel = mutableLiveData.getValue();
+        mapModel.setLocationPermission(b);
+        mutableLiveData.setValue(mapModel);
     }
 }

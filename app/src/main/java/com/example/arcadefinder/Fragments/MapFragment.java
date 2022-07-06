@@ -4,12 +4,14 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -18,15 +20,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.arcadefinder.Activities.QueryActivity;
 import com.example.arcadefinder.Adapters.CustomWindowAdapter;
 import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.Models.MapModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.MapViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -53,6 +61,7 @@ import java.util.Map;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public final String TAG = getClass().getSimpleName();
+    public static final double DEFAULT_RADIUS = 50;
 
     private GoogleMap map;
     private Location currentLocation;
@@ -80,26 +89,44 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         fusedLocationProviderClient = getFusedLocationProviderClient(getContext());
 
+        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
+        mapViewModel.getMapModel().observe(getViewLifecycleOwner(), new Observer<MapModel>() {
+            @Override
+            public void onChanged(MapModel mapModel) {
+                List<GameLocation> locationsToDisplay = mapModel.getLocationList();
+                if (!locationsToDisplay.isEmpty() && mapModel.getLocationPermission()) {
+                    for (GameLocation location : locationsToDisplay) {
+                        ParseGeoPoint coordinates = location.getCoordinates();
+                        double lat = coordinates.getLatitude();
+                        double lng = coordinates.getLongitude();
+                        String locationName = location.getLocationName();
+                        String address = location.getAddress();
+                        placeMarker(lat, lng, locationName, address);
+                    }
+                    Toast.makeText(getContext(), "Done with search!", Toast.LENGTH_SHORT).show();
+                    locationsToDisplay.clear();
+                }
+            }
+        });
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(MapFragment.this);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                // Query should be a game, followed by radius
-                Log.i(TAG, "onQueryTextSubmit: " + query);
-                // Query name of game from database, filter by name and isVerified
-                // TODO: Might want to filter by city, state, or country also depending on the radius
-                ParseGeoPoint currentCoords = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLatitude());
-                // Check all the returned locations, display marker if in radius of the current location, otherwise do not display it
-                return false;
-            }
+        // https://stackoverflow.com/a/36787406
+        View locationButton = ((View) view.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        // position on right bottom
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        rlp.setMargins(0, 0, 30, 30);
 
+        searchView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), QueryActivity.class);
+                startActivity(i);
             }
         });
     }
@@ -120,28 +147,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         checkPermissions();
 
         map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            // Coordinates have been passed in
-            GameLocation gameLocation = bundle.getParcelable("gameLocation");
-            ParseGeoPoint coordinates = gameLocation.getCoordinates();
-            double lat = coordinates.getLatitude();
-            double lng = coordinates.getLongitude();
-            String locationName = gameLocation.getLocationName();
-            String address = gameLocation.getAddress();
-            placeMarker(lat, lng, locationName, address);
-            gameLocation.setIsVerified(true);
-            gameLocation.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null) {
-                        Log.i(TAG, "done: successfully verified location");
-                    } else {
-                        Log.e(TAG, "done: error verifying location", e);
-                    }
-                }
-            });
-        }
     }
 
     /**
@@ -155,7 +160,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
 
-        // Imported?
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
         locationClient.getLastLocation()
                 .addOnSuccessListener(location -> {
@@ -185,6 +189,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             bounds = new LatLngBounds(latLng, latLng);
         }
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            ParseGeoPoint currCoordinates = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+            String gameTitle = bundle.getString("gameTitle");
+            int radius = bundle.getInt("radius");
+            mapViewModel.queryLocations(gameTitle, radius, currCoordinates);
+            Toast.makeText(getContext(), "Searching..", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void displayLocation() {
@@ -208,6 +221,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             requestLocation.launch(permissions);
         } else {
             // Already have permission
+            mapViewModel.setLocationPermission(true);
             getCurrentLocation();
         }
     }
@@ -229,10 +243,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.i(TAG, "onActivityResult: " + result);
             if (result.get(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.i(TAG, "onActivityResult: got location permission");
+                mapViewModel.setLocationPermission(true);
                 getCurrentLocation();
             } else {
                 // Permission was denied
                 Toast.makeText(getContext(), "Permission was denied", Toast.LENGTH_SHORT).show();
+                mapViewModel.setLocationPermission(false);
                 getDefaultLocation();
             }
         }

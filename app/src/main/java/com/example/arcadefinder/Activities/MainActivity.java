@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.arcadefinder.Fragments.GuestFragment;
 import com.example.arcadefinder.Fragments.MapFragment;
@@ -20,11 +22,14 @@ import com.example.arcadefinder.R;
 import com.example.arcadefinder.Fragments.UploadFragment;
 import com.example.arcadefinder.ViewModels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class MainActivity extends AppCompatActivity {
 
+    final String TAG = getClass().getSimpleName();
     final FragmentManager fragmentManager = getSupportFragmentManager();
     private BottomNavigationView bottomNavigation;
     private MainViewModel mainViewModel;
@@ -34,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent i = getIntent();
-        boolean placingMarker = i.getBooleanExtra("placingMarker", false);
+        boolean acceptingLocation = i.getBooleanExtra("acceptingLocation", false);
+        boolean querying = i.getBooleanExtra("querying", false);
+
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getUser().observe(this, new Observer<MainModel>() {
@@ -49,16 +56,41 @@ public class MainActivity extends AppCompatActivity {
                         switch (item.getItemId()) {
                             case R.id.action_map:
                                 fragment = new MapFragment();
-                                if (placingMarker) {
-                                    GameLocation gameLocation = i.getParcelableExtra("gameLocation");
+//                                if (placingMarker) {
+//                                    GameLocation gameLocation = i.getParcelableExtra("gameLocation");
 //                                    double[] coordinates = i.getDoubleArrayExtra("coordinates");
 //                                    String locationName = i.getStringExtra("locationName");
 //                                    String address = i.getStringExtra("address");
-                                    Bundle bundle = new Bundle();
-                                    bundle.putParcelable("gameLocation", gameLocation);
+//                                    Bundle bundle = new Bundle();
+//                                    bundle.putParcelable("gameLocation", gameLocation);
 //                                    bundle.putDoubleArray("coordinates", coordinates);
 //                                    bundle.putString("locationName", locationName);
 //                                    bundle.putString("address", address);
+//                                    fragment.setArguments(bundle);
+//                                }
+                                if (acceptingLocation) {
+                                    GameLocation gameLocation = i.getParcelableExtra("gameLocation");
+                                    gameLocation.setIsVerified(true);
+                                    gameLocation.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Log.i(TAG, "done: successfully verified location");
+                                                Toast.makeText(MainActivity.this, "Request was accepted", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Log.e(TAG, "done: error verifying location", e);
+                                            }
+                                        }
+                                    });
+                                }
+                                if (querying) {
+                                    String gameTitle = i.getStringExtra("gameTitle");
+                                    int radius = i.getIntExtra("radius", 5);
+
+                                    Bundle bundle = new Bundle();
+
+                                    bundle.putString("gameTitle", gameTitle);
+                                    bundle.putInt("radius", radius);
                                     fragment.setArguments(bundle);
                                 }
                                 break;

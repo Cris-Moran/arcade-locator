@@ -58,12 +58,11 @@ public class RequestDetailsActivity extends AppCompatActivity {
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(RequestDetailsActivity.this, "Request was accepted", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(RequestDetailsActivity.this, MainActivity.class);
                 ParseGeoPoint coordinates = gameLocation.getCoordinates();
                 double lat = coordinates.getLatitude();
                 double lng = coordinates.getLongitude();
-                i.putExtra("placingMarker", true);
+                i.putExtra("acceptingLocation", true);
 //                i.putExtra("coordinates", new double[]{lat, lng});
 //                i.putExtra("locationName", gameLocation.getLocationName());
 //                i.putExtra("address", gameLocation.getAddress());
