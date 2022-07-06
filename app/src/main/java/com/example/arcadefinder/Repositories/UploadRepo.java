@@ -6,11 +6,17 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.arcadefinder.Models.UploadModel;
 import com.example.arcadefinder.GameLocation;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -88,4 +94,23 @@ public class UploadRepo {
         Places.createClient(context);
     }
 
+    public void getPlace(AutocompleteSupportFragment fragmentAddress, MutableLiveData<UploadModel> mutableLiveData) {
+        fragmentAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                UploadModel uploadModel = mutableLiveData.getValue();
+                LatLng latLng = place.getLatLng();
+                ParseGeoPoint parseGeoPoint = new ParseGeoPoint(latLng.latitude, latLng.longitude);
+                uploadModel.setCoordinates(parseGeoPoint);
+                uploadModel.setLocationName(place.getName());
+                uploadModel.setAddress(place.getAddress());
+                mutableLiveData.postValue(uploadModel);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
+    }
 }

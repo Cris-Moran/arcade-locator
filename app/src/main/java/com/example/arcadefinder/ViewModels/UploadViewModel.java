@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.arcadefinder.Models.UploadModel;
 import com.example.arcadefinder.Repositories.UploadRepo;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 
@@ -43,4 +44,7 @@ public class UploadViewModel extends AndroidViewModel {
         uploadRepo.initPlaces(context);
     }
 
+    public void getPlace(AutocompleteSupportFragment fragmentAddress) {
+        uploadRepo.getPlace(fragmentAddress, mutableLiveData);
+    }
 }

@@ -62,7 +62,7 @@ public class UploadFragment extends Fragment {
     Button btnSubmitUpload;
     UploadViewModel uploadViewModel;
     File file;
-    LatLng coordinates;
+    ParseGeoPoint coordinates;
     String locationName;
     String address;
 
@@ -95,6 +95,7 @@ public class UploadFragment extends Fragment {
             public void onChanged(UploadModel uploadModel) {
                 // https://stackoverflow.com/a/60285340
                 if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
+                    coordinates = uploadModel.getCoordinates();
                     locationName = uploadModel.getLocationName();
                     address = uploadModel.getAddress();
                     boolean submitted = uploadModel.getStatus();
@@ -121,8 +122,7 @@ public class UploadFragment extends Fragment {
                     Toast.makeText(getContext(), "Please fill out all fields before submitting", Toast.LENGTH_SHORT).show();
                 } else {
                     ParseFile image = new ParseFile(file);
-                    ParseGeoPoint location = new ParseGeoPoint(coordinates.latitude, coordinates.longitude);
-                    uploadViewModel.createUpload(location, locationName, address, gameTitle, description, image);
+                    uploadViewModel.createUpload(coordinates, locationName, address, gameTitle, description, image);
                 }
             }
         });
@@ -138,22 +138,7 @@ public class UploadFragment extends Fragment {
         uploadViewModel.initPlaces();
 
         fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
-        fragmentAddress.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-                coordinates = place.getLatLng();
-                locationName = place.getName();
-                address = place.getAddress();
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
+        uploadViewModel.getPlace(fragmentAddress);
     }
 
     ActivityResultLauncher<Intent> launchCameraForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

@@ -60,12 +60,7 @@ public class RequestDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(RequestDetailsActivity.this, MainActivity.class);
                 ParseGeoPoint coordinates = gameLocation.getCoordinates();
-                double lat = coordinates.getLatitude();
-                double lng = coordinates.getLongitude();
                 i.putExtra("acceptingLocation", true);
-//                i.putExtra("coordinates", new double[]{lat, lng});
-//                i.putExtra("locationName", gameLocation.getLocationName());
-//                i.putExtra("address", gameLocation.getAddress());
                 i.putExtra("gameLocation", gameLocation);
                 startActivity(i);
                 finish();

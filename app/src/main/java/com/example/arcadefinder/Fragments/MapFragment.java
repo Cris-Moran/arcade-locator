@@ -190,6 +190,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             bounds = new LatLngBounds(latLng, latLng);
         }
 
+        // Now that we have location, can search for markers
         Bundle bundle = getArguments();
         if (bundle != null) {
             ParseGeoPoint currCoordinates = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
