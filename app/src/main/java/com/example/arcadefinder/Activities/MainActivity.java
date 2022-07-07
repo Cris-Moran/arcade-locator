@@ -56,34 +56,12 @@ public class MainActivity extends AppCompatActivity {
                         switch (item.getItemId()) {
                             case R.id.action_map:
                                 fragment = new MapFragment();
-//                                if (placingMarker) {
-//                                    GameLocation gameLocation = i.getParcelableExtra("gameLocation");
-//                                    double[] coordinates = i.getDoubleArrayExtra("coordinates");
-//                                    String locationName = i.getStringExtra("locationName");
-//                                    String address = i.getStringExtra("address");
-//                                    Bundle bundle = new Bundle();
-//                                    bundle.putParcelable("gameLocation", gameLocation);
-//                                    bundle.putDoubleArray("coordinates", coordinates);
-//                                    bundle.putString("locationName", locationName);
-//                                    bundle.putString("address", address);
-//                                    fragment.setArguments(bundle);
-//                                }
                                 if (acceptingLocation) {
                                     GameLocation gameLocation = i.getParcelableExtra("gameLocation");
-                                    gameLocation.setIsVerified(true);
-                                    gameLocation.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e == null) {
-                                                Log.i(TAG, "done: successfully verified location");
-                                                Toast.makeText(MainActivity.this, "Request was accepted", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Log.e(TAG, "done: error verifying location", e);
-                                            }
-                                        }
-                                    });
+                                    mainViewModel.verifyLocation(gameLocation);
                                 }
                                 if (querying) {
+                                    // Pass information from search query into map fragment
                                     String gameTitle = i.getStringExtra("gameTitle");
                                     int radius = i.getIntExtra("radius", 5);
 

@@ -24,6 +24,8 @@ public class AdminRepo {
         query.include(GameLocation.KEY_AUTHOR);
         // limit query to latest 20 items
         query.setLimit(20);
+        // only get queries that haven't been verified
+        query.whereEqualTo(GameLocation.KEY_VERIFIED, false);
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         // start an asynchronous call for posts

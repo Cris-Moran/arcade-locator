@@ -59,7 +59,6 @@ public class RequestDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(RequestDetailsActivity.this, MainActivity.class);
-                ParseGeoPoint coordinates = gameLocation.getCoordinates();
                 i.putExtra("acceptingLocation", true);
                 i.putExtra("gameLocation", gameLocation);
                 startActivity(i);
