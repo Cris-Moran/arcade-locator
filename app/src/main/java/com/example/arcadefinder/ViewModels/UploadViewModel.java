@@ -34,7 +34,6 @@ public class UploadViewModel extends AndroidViewModel {
 
     public LiveData<UploadModel> getUpload() {
         if (mutableLiveData == null) {
-            mutableLiveData = new MutableLiveData<>();
             mutableLiveData = uploadRepo.getUpload();
         }
         return mutableLiveData;

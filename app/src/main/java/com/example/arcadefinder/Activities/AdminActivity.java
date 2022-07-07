@@ -1,6 +1,8 @@
 package com.example.arcadefinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,7 +12,9 @@ import android.util.Log;
 
 import com.example.arcadefinder.Adapters.RequestAdapter;
 import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.Models.AdminModel;
 import com.example.arcadefinder.R;
+import com.example.arcadefinder.ViewModels.AdminViewModel;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -23,6 +27,7 @@ public class AdminActivity extends AppCompatActivity {
     private RecyclerView rvRequests;
     protected List<GameLocation> requests;
     protected RequestAdapter adapter;
+    AdminViewModel adminViewModel;
 
     String TAG = getClass().getSimpleName();
 
@@ -45,34 +50,23 @@ public class AdminActivity extends AppCompatActivity {
         // add divider in between requests
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvRequests.getContext(), linearLayoutManager.getOrientation());
         rvRequests.addItemDecoration(dividerItemDecoration);
-        // query requests from Parse
-        queryRequests();
-    }
 
-    private void queryRequests() {
-        // specify what type of data we want to query - Post.class
-        ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
-        // include data referred by user key
-        query.include(GameLocation.KEY_AUTHOR);
-        // limit query to latest 20 items
-        query.setLimit(20);
-        // order posts by creation date (newest first)
-        query.addDescendingOrder("createdAt");
-        // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<GameLocation>() {
+        adminViewModel = new ViewModelProvider(this).get(AdminViewModel.class);
+        adminViewModel.getAdminModel().observe(this, new Observer<AdminModel>() {
             @Override
-            public void done(List<GameLocation> requests, ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
-                    return;
+            public void onChanged(AdminModel adminModel) {
+                List<GameLocation> locations = adminModel.getLocations();
+                if (locations != null) {
+                    requests.addAll(locations);
+                    adapter.notifyDataSetChanged();
                 }
-
-                // save received posts to list and notify adapter of new data
-                AdminActivity.this.requests.addAll(requests);
-                adapter.notifyDataSetChanged();
             }
         });
+
+        // query requests from Parse
+        adminViewModel.queryRequests();
     }
+
+
 
 }
