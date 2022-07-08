@@ -6,6 +6,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -28,9 +29,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.arcadefinder.Activities.GameInfoActivity;
 import com.example.arcadefinder.Activities.QueryActivity;
 import com.example.arcadefinder.Adapters.CustomWindowAdapter;
 import com.example.arcadefinder.GameLocation;
@@ -43,17 +49,28 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import okhttp3.Headers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,7 +78,6 @@ import java.util.Map;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public final String TAG = getClass().getSimpleName();
-    public static final double DEFAULT_RADIUS = 50;
 
     private GoogleMap map;
     private Location currentLocation;
@@ -69,6 +85,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     FusedLocationProviderClient fusedLocationProviderClient;
     SearchView searchView;
     MapViewModel mapViewModel;
+
 
     public MapFragment() {
         // Required empty public constructor
@@ -89,6 +106,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         fusedLocationProviderClient = getFusedLocationProviderClient(getContext());
 
+        View.OnClickListener searchListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), QueryActivity.class);
+                startActivity(i);
+            }
+        };
+
+        searchView.setOnClickListener(searchListener);
+
+        // hack: make entire search bar clickable
+        EditText searchText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchText.setOnClickListener(searchListener);
+        searchText.setFocusable(false);
+        searchText.setFocusableInTouchMode(false);
+        searchText.setCursorVisible(false);
+
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
         mapViewModel.getMapModel().observe(getViewLifecycleOwner(), new Observer<MapModel>() {
             @Override
@@ -99,13 +133,59 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         ParseGeoPoint coordinates = location.getCoordinates();
                         double lat = coordinates.getLatitude();
                         double lng = coordinates.getLongitude();
-                        String locationName = location.getLocationName();
+                        String locationName = location.getTitle();
                         String address = location.getAddress();
                         placeMarker(lat, lng, locationName, address);
                     }
+                    // Convert meters to miles
+                    double miRadius = mapModel.getRadius();
+                    double mtrRadius = miRadius * 1609.34;
+
+                    LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    map.addCircle(new CircleOptions().center(latLng).radius(mtrRadius).strokeWidth(5).strokeColor(Color.BLUE).fillColor(0x220000FF));
                     Toast.makeText(getContext(), "Done with search!", Toast.LENGTH_SHORT).show();
-                    locationsToDisplay.clear();
                 }
+                searchText.setText(mapModel.getQuery());
+            }
+        });
+
+        ImageView closeButton = searchView.findViewById(androidx.appcompat.R.id.search_close_btn);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                map.clear();
+                searchText.setText("");
+            }
+        });
+
+        String searchQuery = "DDR%20Extreme";
+        String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s&format=json", searchQuery);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(wikiQueryURL, new JsonHttpResponseHandler() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.d(TAG, "onSuccess");
+                JSONObject jsonObject = json.jsonObject;
+                try {
+                    JSONObject results = jsonObject.getJSONObject("query");
+                    JSONArray search = results.getJSONArray("search");
+                    for (int i = 0; i < search.length(); i++) {
+                        JSONObject item = search.getJSONObject(i);
+                        String title = item.getString("title");
+                        Log.i(TAG, "onSuccess: title: " + title);
+                    }
+                    Log.i(TAG, "onSuccess: search object: " + search);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Hit json exception ", e);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.d(TAG, "onFailure");
             }
         });
 
@@ -121,14 +201,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         rlp.setMargins(0, 0, 30, 30);
-
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), QueryActivity.class);
-                startActivity(i);
-            }
-        });
     }
 
     /**
@@ -147,6 +219,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         checkPermissions();
 
         map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
+        
+        map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(@NonNull Marker marker) {
+                Intent i = new Intent(getContext(), GameInfoActivity.class);
+                i.putExtra("title", marker.getTitle());
+                i.putExtra("address", marker.getSnippet());
+                startActivity(i);
+            }
+        });
     }
 
     /**
@@ -209,9 +291,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public void placeMarker(double lat, double lng, String locationName, String address) {
+    public Marker placeMarker(double lat, double lng, String gameTitle, String address) {
         LatLng markerLocation = new LatLng(lat, lng);
-        map.addMarker(new MarkerOptions().position(markerLocation).title(locationName).snippet(address));
+        return map.addMarker(new MarkerOptions().position(markerLocation).title(gameTitle).snippet(address));
     }
 
     public void checkPermissions() {
@@ -219,7 +301,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // No location permissions, need to request them
             String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            requestLocation.launch(permissions);
+            requestLocationPermission.launch(permissions);
         } else {
             // Already have permission
             mapViewModel.setLocationPermission(true);
@@ -238,7 +320,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
-    ActivityResultLauncher<String[]> requestLocation = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+    ActivityResultLauncher<String[]> requestLocationPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
         @Override
         public void onActivityResult(Map<String, Boolean> result) {
             Log.i(TAG, "onActivityResult: " + result);

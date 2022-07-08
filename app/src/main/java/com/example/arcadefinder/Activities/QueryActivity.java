@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.arcadefinder.R;
 
+import org.json.JSONObject;
+
 public class QueryActivity extends AppCompatActivity {
 
     EditText etGameQuery;
@@ -41,6 +43,8 @@ public class QueryActivity extends AppCompatActivity {
                 }
                 Intent i = new Intent(QueryActivity.this, MainActivity.class);
                 i.putExtra("gameTitle", etGameQuery.getText().toString());
+
+                String wikiAPIRequest = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=Craig%20Noone&format=json";
 
                 // Convert string from drop down into an integer
                 String radiusString = spinnerRadii.getSelectedItem().toString();

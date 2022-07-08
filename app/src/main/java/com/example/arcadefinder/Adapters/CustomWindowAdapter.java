@@ -27,6 +27,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
         TextView description = v.findViewById(R.id.tv_info_window_description);
         description.setText(marker.getSnippet());
         // Return info window contents
+
         return v;
     }
 

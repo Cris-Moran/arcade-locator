@@ -8,6 +8,7 @@ import com.example.arcadefinder.Activities.AdminActivity;
 import com.example.arcadefinder.GameLocation;
 import com.example.arcadefinder.Models.LoginModel;
 import com.example.arcadefinder.Models.MapModel;
+import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -22,6 +23,7 @@ public class MapRepo {
     public final String TAG = "MapRepo";
 
     public void queryLocations(String gameTitle, double radius, ParseGeoPoint currentLocation, MutableLiveData<MapModel> mutableLiveData) {
+        // TODO: Can take in multiple / general inputs, look into multiple Search APIs and combine the result
         // specify what type of data we want to query - Post.class
         ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
         // get queries near a certain radius
@@ -43,6 +45,7 @@ public class MapRepo {
                 }
                 MapModel mapModel = mutableLiveData.getValue();
                 mapModel.setLocationList(locations);
+                mapModel.setRadius(radius);
                 mutableLiveData.setValue(mapModel);
             }
         });

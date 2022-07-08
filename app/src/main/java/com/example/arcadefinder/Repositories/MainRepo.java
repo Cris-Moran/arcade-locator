@@ -25,14 +25,16 @@ public class MainRepo {
         return mutableLiveData;
     }
 
-    public void verifyLocation(GameLocation gameLocation) {
+    public void verifyLocation(GameLocation gameLocation, MutableLiveData<MainModel> mutableLiveData) {
         gameLocation.setIsVerified(true);
         gameLocation.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
                     Log.i(TAG, "done: successfully verified location");
-//                    Toast.makeText(MainActivity.this, "Request was accepted", Toast.LENGTH_SHORT).show();
+                    MainModel mainModel = mutableLiveData.getValue();
+                    mainModel.setVerifyStatus(true);
+                    mutableLiveData.setValue(mainModel);
                 } else {
                     Log.e(TAG, "done: error verifying location", e);
                 }
