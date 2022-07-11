@@ -2,6 +2,7 @@ package com.example.arcadefinder.Fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -19,16 +20,22 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.arcadefinder.Models.UploadModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.UploadViewModel;
@@ -40,12 +47,20 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import okhttp3.Headers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,7 +69,7 @@ public class UploadFragment extends Fragment {
 
     public final String TAG = getClass().getSimpleName();
 
-    EditText etGame;
+    AutoCompleteTextView etGame;
     EditText etDescription;
     AutocompleteSupportFragment fragmentAddress;
     ImageView ivGamePic;
@@ -124,6 +139,58 @@ public class UploadFragment extends Fragment {
                     ParseFile image = new ParseFile(file);
                     uploadViewModel.createUpload(coordinates, locationName, address, gameTitle, description, image);
                 }
+            }
+        });
+
+
+        etGame.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Replace spaces with %20 to make safe for links
+                String searchQuery = s.toString().replace(" ", "%20");
+                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", searchQuery);
+
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.get(wikiQueryURL, new JsonHttpResponseHandler() {
+                    @SuppressLint("NotifyDataSetChanged")
+                    @Override
+                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        JSONObject jsonObject = json.jsonObject;
+                        try {
+                            JSONObject results = jsonObject.getJSONObject("query");
+                            JSONArray search = results.getJSONArray("search");
+                            int iterateLen = 5;
+                            if (search.length() < 5) {
+                                iterateLen = search.length();
+                            }
+                            ArrayList<String> suggestions = new ArrayList<>();
+                            for (int i = 0; i < iterateLen; i++) {
+                                JSONObject item = search.getJSONObject(i);
+                                String title = item.getString("title");
+                                suggestions.add(title);
+                            }
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, suggestions);
+                            etGame.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Hit json exception ", e);
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                        Log.d(TAG, "onFailure");
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
 

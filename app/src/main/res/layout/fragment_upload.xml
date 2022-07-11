@@ -17,18 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ImageView
         android:id="@+id/ivGamePic"
         android:layout_width="0dp"
         android:layout_height="150dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="56dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:src="@tools:sample/avatars" />
-
 
     <Button
         android:id="@+id/btnUploadPic"
@@ -54,7 +54,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="44dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
@@ -78,14 +78,13 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/etGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:ems="10"
             android:hint="game"
-            android:inputType="textPersonName" />
+            android:completionThreshold="1" />
 
         <EditText
             android:id="@+id/etDescription"

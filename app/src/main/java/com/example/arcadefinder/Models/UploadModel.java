@@ -4,6 +4,8 @@ import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
+import java.util.List;
+
 public class UploadModel {
 
     private ParseGeoPoint coordinates;
@@ -15,7 +17,15 @@ public class UploadModel {
     private boolean isVerified;
     private ParseUser author;
     private boolean status;
+    private List<String> autocompleteSuggestions;
 
+    public List<String> getAutocompleteSuggestions() {
+        return autocompleteSuggestions;
+    }
+
+    public void setAutocompleteSuggestions(List<String> autocompleteSuggestions) {
+        this.autocompleteSuggestions = autocompleteSuggestions;
+    }
 
     public ParseGeoPoint getCoordinates() {
         return coordinates;

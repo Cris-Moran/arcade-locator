@@ -66,6 +66,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -85,6 +86,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     FusedLocationProviderClient fusedLocationProviderClient;
     SearchView searchView;
     MapViewModel mapViewModel;
+    HashMap<Marker, GameLocation> markerGameLocationHashMap = new HashMap<>();
 
 
     public MapFragment() {
@@ -130,12 +132,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 List<GameLocation> locationsToDisplay = mapModel.getLocationList();
                 if (!locationsToDisplay.isEmpty() && mapModel.getLocationPermission()) {
                     for (GameLocation location : locationsToDisplay) {
-                        ParseGeoPoint coordinates = location.getCoordinates();
-                        double lat = coordinates.getLatitude();
-                        double lng = coordinates.getLongitude();
-                        String locationName = location.getTitle();
-                        String address = location.getAddress();
-                        placeMarker(lat, lng, locationName, address);
+                        placeMarker(location);
                     }
                     // Convert meters to miles
                     double miRadius = mapModel.getRadius();
@@ -158,36 +155,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        String searchQuery = "DDR%20Extreme";
-        String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s&format=json", searchQuery);
-
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get(wikiQueryURL, new JsonHttpResponseHandler() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.d(TAG, "onSuccess");
-                JSONObject jsonObject = json.jsonObject;
-                try {
-                    JSONObject results = jsonObject.getJSONObject("query");
-                    JSONArray search = results.getJSONArray("search");
-                    for (int i = 0; i < search.length(); i++) {
-                        JSONObject item = search.getJSONObject(i);
-                        String title = item.getString("title");
-                        Log.i(TAG, "onSuccess: title: " + title);
-                    }
-                    Log.i(TAG, "onSuccess: search object: " + search);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Hit json exception ", e);
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.d(TAG, "onFailure");
-            }
-        });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -224,8 +191,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {
                 Intent i = new Intent(getContext(), GameInfoActivity.class);
-                i.putExtra("title", marker.getTitle());
-                i.putExtra("address", marker.getSnippet());
+                GameLocation gameLocation = markerGameLocationHashMap.get(marker);
+                i.putExtra("gameLocation", gameLocation);
                 startActivity(i);
             }
         });
@@ -273,10 +240,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         // Now that we have location, can search for markers
+        checkQuery();
+    }
+
+    private void checkQuery() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            ParseGeoPoint currCoordinates = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
             String gameTitle = bundle.getString("gameTitle");
+            ParseGeoPoint currCoordinates = new ParseGeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
             int radius = bundle.getInt("radius");
             mapViewModel.queryLocations(gameTitle, radius, currCoordinates);
             Toast.makeText(getContext(), "Searching..", Toast.LENGTH_SHORT).show();
@@ -291,9 +262,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    public Marker placeMarker(double lat, double lng, String gameTitle, String address) {
+    public void placeMarker(GameLocation gameLocation) {
+        ParseGeoPoint coordinates = gameLocation.getCoordinates();
+        double lat = coordinates.getLatitude();
+        double lng = coordinates.getLongitude();
+        String gameTitle = gameLocation.getTitle();
+        String address = gameLocation.getAddress();
         LatLng markerLocation = new LatLng(lat, lng);
-        return map.addMarker(new MarkerOptions().position(markerLocation).title(gameTitle).snippet(address));
+        Marker marker = map.addMarker(new MarkerOptions().position(markerLocation).title(gameTitle).snippet(address));
+        markerGameLocationHashMap.put(marker, gameLocation);
     }
 
     public void checkPermissions() {
