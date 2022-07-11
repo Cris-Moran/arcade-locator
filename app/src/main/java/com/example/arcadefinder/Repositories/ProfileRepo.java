@@ -26,7 +26,7 @@ public class ProfileRepo {
 
         profileModel.setUsername(username);
         profileModel.setProfileImage(profileImage);
-        profileModel.setIsAdmin(isAdmin);
+        profileModel.setAdmin(isAdmin);
 
         mutableLiveData.setValue(profileModel);
         return mutableLiveData;

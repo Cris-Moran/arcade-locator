@@ -8,7 +8,7 @@ public class ProfileModel {
     private String username;
     private ParseFile profileImage;
     private String profileImagePath;
-    private boolean isAdmin;
+    private boolean admin;
 
     public String getUsername() {
         return username;
@@ -34,11 +34,11 @@ public class ProfileModel {
         this.profileImagePath = profileImagePath;
     }
 
-    public boolean getIsAdmin() {
-        return isAdmin;
+    public boolean isAdmin() {
+        return admin;
     }
 
-    public void setIsAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
+    public void setAdmin(boolean isAdmin) {
+        this.admin = isAdmin;
     }
 }

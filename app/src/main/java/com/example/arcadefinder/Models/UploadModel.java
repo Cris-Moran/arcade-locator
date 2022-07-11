@@ -14,9 +14,9 @@ public class UploadModel {
     private String title;
     private String description;
     private ParseFile image;
-    private boolean isVerified;
+    private boolean verified;
     private ParseUser author;
-    private boolean status;
+    private boolean uploadStatus;
     private List<String> autocompleteSuggestions;
 
     public List<String> getAutocompleteSuggestions() {
@@ -83,19 +83,19 @@ public class UploadModel {
         this.author = author;
     }
 
-    public boolean getIsVerified() {
-        return isVerified;
+    public boolean isVerified() {
+        return verified;
     }
 
     public void setIsVerified(boolean verified) {
-        this.isVerified = verified;
+        this.verified = verified;
     }
 
-    public boolean getStatus() {
-        return status;
+    public boolean isUploadStatus() {
+        return uploadStatus;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setUploadStatus(boolean uploadStatus) {
+        this.uploadStatus = uploadStatus;
     }
 }

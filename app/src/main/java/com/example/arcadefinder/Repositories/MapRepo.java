@@ -23,7 +23,6 @@ public class MapRepo {
     public final String TAG = "MapRepo";
 
     public void queryLocations(String gameTitle, double radius, ParseGeoPoint currentLocation, MutableLiveData<MapModel> mutableLiveData) {
-        // TODO: Can take in multiple / general inputs, look into multiple Search APIs and combine the result
         // specify what type of data we want to query - Post.class
         ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
         // get queries near a certain radius
@@ -44,8 +43,12 @@ public class MapRepo {
                     return;
                 }
                 MapModel mapModel = mutableLiveData.getValue();
-                mapModel.setLocationList(locations);
-                mapModel.setRadius(radius);
+                if (locations.isEmpty()) {
+                    mapModel.setQueryStatus(false);
+                } else {
+                    mapModel.setLocationList(locations);
+                    mapModel.setRadius(radius);
+                }
                 mutableLiveData.setValue(mapModel);
             }
         });

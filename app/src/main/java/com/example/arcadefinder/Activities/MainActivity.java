@@ -2,6 +2,7 @@ package com.example.arcadefinder.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
@@ -9,12 +10,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.arcadefinder.Fragments.GuestFragment;
 import com.example.arcadefinder.Fragments.MapFragment;
+import com.example.arcadefinder.Fragments.NotFoundDialogFragment;
 import com.example.arcadefinder.GameLocation;
 import com.example.arcadefinder.Models.MainModel;
 import com.example.arcadefinder.Fragments.ProfileFragment;
@@ -22,12 +23,11 @@ import com.example.arcadefinder.R;
 import com.example.arcadefinder.Fragments.UploadFragment;
 import com.example.arcadefinder.ViewModels.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements NotFoundDialogFragment.NotFoundDialogListener {
 
     final String TAG = getClass().getSimpleName();
     final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(MainModel mainModel) {
                 currentUser = mainModel.getUser();
-                verifyStatus = mainModel.getVerifyStatus();
+                verifyStatus = mainModel.isVerifyStatus();
                 if (verifyStatus) {
                     Toast.makeText(MainActivity.this, "Request was verified!", Toast.LENGTH_SHORT).show();
                 }
@@ -70,16 +70,8 @@ public class MainActivity extends AppCompatActivity {
                             mainViewModel.verifyLocation(gameLocation);
                         }
                         if (querying) {
-                            // Pass information from search query into map fragment
                             String gameTitle = i.getStringExtra("gameTitle");
-                            int radius = i.getIntExtra("radius", 5);
-
-                            Bundle bundle = new Bundle();
-
-                            bundle.putString("gameTitle", gameTitle);
-                            bundle.putInt("radius", radius);
-                            fragment.setArguments(bundle);
-                            i.removeExtra("querying");
+                            setUpQuery(fragment, gameTitle);
                         }
                         break;
                     case R.id.action_upload:
@@ -103,5 +95,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         bottomNavigation.setSelectedItemId(R.id.action_map);
+    }
+
+    @Override
+    public void onItemSelected(String selectedItem) {
+        Fragment fragment = new MapFragment();
+        setUpQuery(fragment, selectedItem);
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+    }
+
+    public void setUpQuery(Fragment fragment, String query) {
+        // Pass information from search query into map fragment
+        Intent i = getIntent();
+
+        int radius = i.getIntExtra("radius", 5);
+        ArrayList<String> suggestions = i.getStringArrayListExtra("suggestions");
+
+        Bundle bundle = new Bundle();
+
+        bundle.putString("gameTitle", query);
+        bundle.putInt("radius", radius);
+        bundle.putStringArrayList("suggestions", suggestions);
+        fragment.setArguments(bundle);
+        i.removeExtra("querying");
     }
 }

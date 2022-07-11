@@ -7,7 +7,7 @@ public class MainModel {
     ParseUser user;
     boolean verifyStatus;
 
-    public boolean getVerifyStatus() {
+    public boolean isVerifyStatus() {
         return verifyStatus;
     }
 

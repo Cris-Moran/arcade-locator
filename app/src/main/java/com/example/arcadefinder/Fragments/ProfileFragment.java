@@ -121,7 +121,7 @@ public class ProfileFragment extends Fragment {
                 String username = profileModel.getUsername();
                 String url = profileModel.getProfileImagePath();
                 ParseFile parseFile = profileModel.getProfileImage();
-                boolean isAdmin = profileModel.getIsAdmin();
+                boolean isAdmin = profileModel.isAdmin();
 
                 if (isAdmin) {
                     btnAdminSettings.setVisibility(View.VISIBLE);

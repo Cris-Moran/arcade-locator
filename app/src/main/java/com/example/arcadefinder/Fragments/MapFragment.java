@@ -4,24 +4,24 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -34,8 +34,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.arcadefinder.Activities.GameInfoActivity;
 import com.example.arcadefinder.Activities.QueryActivity;
 import com.example.arcadefinder.Adapters.CustomWindowAdapter;
@@ -49,29 +47,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
-import com.parse.SaveCallback;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-
-import okhttp3.Headers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,6 +78,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public MapFragment() {
         // Required empty public constructor
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -130,7 +118,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onChanged(MapModel mapModel) {
                 List<GameLocation> locationsToDisplay = mapModel.getLocationList();
-                if (!locationsToDisplay.isEmpty() && mapModel.getLocationPermission()) {
+                Boolean queryStatus = mapModel.getQueryStatus();
+                String query = mapModel.getQuery();
+                if (queryStatus != null && !queryStatus) {
+                    Bundle bundle = getArguments();
+                    Bundle args = new Bundle();
+                    ArrayList<String> suggestions = bundle.getStringArrayList("suggestions");
+                    if (suggestions.contains(query)) {
+                        Toast.makeText(getActivity(), "Game has no registered locations", Toast.LENGTH_SHORT).show();
+                    } else {
+                        args.putStringArrayList("suggestions", suggestions);
+                        showNoticeDialog(args);
+                    }
+                }
+                else if (!locationsToDisplay.isEmpty() && mapModel.isLocationPermission()) {
                     for (GameLocation location : locationsToDisplay) {
                         placeMarker(location);
                     }
@@ -152,6 +153,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
                 map.clear();
                 searchText.setText("");
+                markerGameLocationHashMap.clear();
             }
         });
 
@@ -168,6 +170,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         rlp.setMargins(0, 0, 30, 30);
+    }
+
+    private void showNoticeDialog(Bundle args) {
+        NotFoundDialogFragment notFoundDialogFragment = new NotFoundDialogFragment();
+        notFoundDialogFragment.setArguments(args);
+        notFoundDialogFragment.show(getChildFragmentManager(), "NoticeDialogFragment");
     }
 
     /**
@@ -313,4 +321,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         }
     });
+
 }

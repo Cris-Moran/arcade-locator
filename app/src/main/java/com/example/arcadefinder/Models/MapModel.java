@@ -11,11 +11,18 @@ import java.util.Map;
 public class MapModel {
 
     private List<GameLocation> locationList;
-    private List<Marker> markers;
     private String query;
     private boolean locationPermission;
     private double radius;
-    private Circle circle;
+    private Boolean queryStatus;
+
+    public Boolean getQueryStatus() {
+        return queryStatus;
+    }
+
+    public void setQueryStatus(Boolean queryStatus) {
+        this.queryStatus = queryStatus;
+    }
 
     public double getRadius() {
         return radius;
@@ -25,7 +32,7 @@ public class MapModel {
         this.radius = radius;
     }
 
-    public boolean getLocationPermission() {
+    public boolean isLocationPermission() {
         return locationPermission;
     }
 

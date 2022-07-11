@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,17 +32,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.arcadefinder.Models.UploadModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.UploadViewModel;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 
@@ -58,7 +53,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import okhttp3.Headers;
 
@@ -113,7 +107,7 @@ public class UploadFragment extends Fragment {
                     coordinates = uploadModel.getCoordinates();
                     locationName = uploadModel.getLocationName();
                     address = uploadModel.getAddress();
-                    boolean submitted = uploadModel.getStatus();
+                    boolean submitted = uploadModel.isUploadStatus();
                     if (submitted) {
                         Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
                         // Reload current fragment

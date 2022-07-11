@@ -62,7 +62,7 @@ public class UploadRepo {
         uploadModel.setImage(image);
         uploadModel.setAuthor(author);
         uploadModel.setIsVerified(false);
-        uploadModel.setStatus(status);
+        uploadModel.setUploadStatus(status);
         mutableLiveData.setValue(uploadModel);
     }
 

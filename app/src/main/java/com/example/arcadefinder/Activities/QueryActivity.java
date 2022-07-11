@@ -36,6 +36,7 @@ public class QueryActivity extends AppCompatActivity {
     AutoCompleteTextView etGameQuery;
     Spinner spinnerRadii;
     Button btnSubmitQuery;
+    ArrayList<String> suggestions = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,10 @@ public class QueryActivity extends AppCompatActivity {
                 String radiusString = spinnerRadii.getSelectedItem().toString();
                 int radius = Integer.parseInt(radiusString.split(" ")[0]);
 
+                ArrayList<String> savedSuggestions = suggestions;
+
                 i.putExtra("radius", radius);
+                i.putExtra("suggestions", savedSuggestions);
                 i.putExtra("querying", true);
                 startActivity(i);
             }
@@ -85,6 +89,7 @@ public class QueryActivity extends AppCompatActivity {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        suggestions.clear();
                         JSONObject jsonObject = json.jsonObject;
                         try {
                             JSONObject results = jsonObject.getJSONObject("query");
@@ -93,7 +98,7 @@ public class QueryActivity extends AppCompatActivity {
                             if (search.length() < 5) {
                                 iterateLen = search.length();
                             }
-                            ArrayList<String> suggestions = new ArrayList<>();
+
                             for (int i = 0; i < iterateLen; i++) {
                                 JSONObject item = search.getJSONObject(i);
                                 String title = item.getString("title");
