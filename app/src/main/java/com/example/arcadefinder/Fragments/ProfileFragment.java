@@ -77,7 +77,6 @@ public class ProfileFragment extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick logout button");
                 profileViewModel.logOut();
                 Intent i = new Intent(getContext(), LoginActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // this makes sure the Back button won't work
@@ -133,7 +132,6 @@ public class ProfileFragment extends Fragment {
 
                 if (parseFile != null && parseFile.getUrl() != null) {
                     // Loading image from database if exists
-                    Log.i(TAG, "onChanged: parsefile is: " + parseFile.getUrl());
                     Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 } else if (url == null) {
                     // Default image

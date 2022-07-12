@@ -57,5 +57,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    // AsyncHttp Client
     implementation 'com.codepath.libraries:asynchttpclient:2.2.0'
 }

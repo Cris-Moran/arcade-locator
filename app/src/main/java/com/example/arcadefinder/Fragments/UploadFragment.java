@@ -171,7 +171,6 @@ public class UploadFragment extends Fragment {
                             etGame.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
-                            Log.e(TAG, "Hit json exception ", e);
                             e.printStackTrace();
                         }
                     }

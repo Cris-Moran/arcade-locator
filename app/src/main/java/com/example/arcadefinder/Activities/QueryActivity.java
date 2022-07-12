@@ -108,14 +108,12 @@ public class QueryActivity extends AppCompatActivity {
                             etGameQuery.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
-                            Log.e(TAG, "Hit json exception ", e);
                             e.printStackTrace();
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.d(TAG, "onFailure");
                     }
                 });
             }

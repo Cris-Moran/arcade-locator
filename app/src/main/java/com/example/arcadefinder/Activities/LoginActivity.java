@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onChanged(LoginModel loginModel) {
                 ParseUser currentUser = loginModel.getUser();
                 if (currentUser != null) {
-                    Log.i(TAG, "logged in! User is: " + currentUser.getUsername());
                     Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
                     goMainActivity();
                 } else if (firstObservation) {
@@ -65,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick login button");
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
                 loginViewModel.logIn(username, password);
@@ -76,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Go to register activity
-                Log.i(TAG, "onClick register text");
                 Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(i);
             }
@@ -85,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
         tvContinueGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick continue as guest");
                 Toast.makeText(LoginActivity.this, "Logged in as guest", Toast.LENGTH_SHORT).show();
                 goMainActivity();
             }

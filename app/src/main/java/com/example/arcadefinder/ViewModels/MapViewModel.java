@@ -11,6 +11,8 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.ParseGeoPoint;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class MapViewModel extends ViewModel {
@@ -42,4 +44,7 @@ public class MapViewModel extends ViewModel {
         mutableLiveData.setValue(mapModel);
     }
 
+    public HashMap<String, Object> getLocationFields(GameLocation gameLocation) {
+        return mapRepo.getLocationFields(gameLocation);
+    }
 }

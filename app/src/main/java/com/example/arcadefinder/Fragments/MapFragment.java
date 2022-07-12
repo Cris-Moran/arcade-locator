@@ -56,6 +56,7 @@ import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -125,7 +126,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     Bundle args = new Bundle();
                     ArrayList<String> suggestions = bundle.getStringArrayList("suggestions");
                     if (suggestions.contains(query)) {
-                        Toast.makeText(getActivity(), "Game has no registered locations", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "No registered locations found for this game", Toast.LENGTH_SHORT).show();
                     } else {
                         args.putStringArrayList("suggestions", suggestions);
                         showNoticeDialog(args);
@@ -211,9 +212,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
-        // TODO: Move to a Repo
-        // TODO: Do I have to write this twice?
-
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
 
@@ -271,18 +269,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void placeMarker(GameLocation gameLocation) {
-        ParseGeoPoint coordinates = gameLocation.getCoordinates();
-        double lat = coordinates.getLatitude();
-        double lng = coordinates.getLongitude();
-        String gameTitle = gameLocation.getTitle();
-        String address = gameLocation.getAddress();
-        LatLng markerLocation = new LatLng(lat, lng);
+        HashMap<String, Object> fields = mapViewModel.getLocationFields(gameLocation);
+
+        String gameTitle = (String) fields.get("gameTitle");
+        String address = (String) fields.get("address");
+        LatLng markerLocation = (LatLng) fields.get("markerLocation");
+
         Marker marker = map.addMarker(new MarkerOptions().position(markerLocation).title(gameTitle).snippet(address));
         markerGameLocationHashMap.put(marker, gameLocation);
     }
 
     public void checkPermissions() {
-        // TODO: Should I check for both permissions? Or only one?
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // No location permissions, need to request them
             String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -308,9 +305,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     ActivityResultLauncher<String[]> requestLocationPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
         @Override
         public void onActivityResult(Map<String, Boolean> result) {
-            Log.i(TAG, "onActivityResult: " + result);
             if (result.get(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Log.i(TAG, "onActivityResult: got location permission");
                 mapViewModel.setLocationPermission(true);
                 getCurrentLocation();
             } else {

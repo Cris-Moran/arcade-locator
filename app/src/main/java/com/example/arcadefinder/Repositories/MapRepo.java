@@ -8,6 +8,7 @@ import com.example.arcadefinder.Activities.AdminActivity;
 import com.example.arcadefinder.GameLocation;
 import com.example.arcadefinder.Models.LoginModel;
 import com.example.arcadefinder.Models.MapModel;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -16,6 +17,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class MapRepo {
@@ -62,5 +65,22 @@ public class MapRepo {
         mapModel.setLocationList(gameLocations);
         mutableLiveData.setValue(mapModel);
         return mutableLiveData;
+    }
+
+    public HashMap<String, Object> getLocationFields(GameLocation gameLocation) {
+        HashMap<String, Object> locationFields = new HashMap<>();
+
+        ParseGeoPoint coordinates = gameLocation.getCoordinates();
+        double lat = coordinates.getLatitude();
+        double lng = coordinates.getLongitude();
+        LatLng markerLocation = new LatLng(lat, lng);
+        String gameTitle = gameLocation.getTitle();
+        String address = gameLocation.getAddress();
+
+        locationFields.put("markerLocation", markerLocation);
+        locationFields.put("gameTitle", gameTitle);
+        locationFields.put("address", address);
+
+        return locationFields;
     }
 }
