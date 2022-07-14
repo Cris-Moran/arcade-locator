@@ -128,6 +128,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 map.clear();
                 searchText.setText("");
                 markerGameLocationHashMap.clear();
+                locations.clear();
 
                 // remove markers, circle, and query from persisting
                 editor.clear();
@@ -177,6 +178,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 }
                 // Query succeeded
                 else if (!locationsToDisplay.isEmpty() && mapModel.isLocationPermission()) {
+                    map.clear();
                     for (GameLocation location : locationsToDisplay) {
                         placeMarker(location);
                     }
@@ -190,22 +192,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         long radius = Double.doubleToLongBits(circleRadius);
                         editor.putLong("radius", radius);
                         editor.apply();
+
                         Toast.makeText(getContext(), "Done with search!", Toast.LENGTH_SHORT).show();
                         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                         map.addCircle(new CircleOptions().center(latLng).radius(circleRadius).strokeWidth(5).strokeColor(Color.BLUE).fillColor(0x220000FF));
 
-                        // Persist query
-                        EditText searchText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
-                        editor.putString("query", searchText.getText().toString());
+                    } else {
+                        // Check if circle and markers can be placed
+                        double longitude = Double.longBitsToDouble(sharedPref.getLong("longitude", 0));
+                        double latitude = Double.longBitsToDouble(sharedPref.getLong("latitude", 0));
+                        LatLng latLng = new LatLng(latitude, longitude);
+                        double radius = Double.longBitsToDouble(sharedPref.getLong("radius", 0));
+
+                        if (radius != 0) {
+                            map.addCircle(new CircleOptions().center(latLng).radius(radius).strokeWidth(5).strokeColor(Color.BLUE).fillColor(0x220000FF));
+                        }
+
                     }
                 }
 
                 String prefQuery = sharedPref.getString("query", "");
-                if (!prefQuery.equals("")) {
-                    searchText.setText(prefQuery);
-                }
                 if (mapModel.getQuery() != null) {
                     searchText.setText(mapModel.getQuery());
+                } else if (!prefQuery.equals("")) {
+                    searchText.setText(prefQuery);
                 }
             }
         });
@@ -340,17 +350,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Toast.makeText(getContext(), "Searching..", Toast.LENGTH_SHORT).show();
         }
 
-        // Check if circle and markers can be placed
-        double longitude = Double.longBitsToDouble(sharedPref.getLong("longitude", 0));
-        double latitude = Double.longBitsToDouble(sharedPref.getLong("latitude", 0));
-        LatLng latLng = new LatLng(latitude, longitude);
-        double radius = Double.longBitsToDouble(sharedPref.getLong("radius", 0));
 
         String locationsJson = sharedPref.getString("locationsJson", "");
-        if (radius != 0 && !locationsJson.equals("")) {
+        if (!locationsJson.equals("")) {
             Gson gson = new Gson();
-            map.addCircle(new CircleOptions().center(latLng).radius(radius).strokeWidth(5).strokeColor(Color.BLUE).fillColor(0x220000FF));
-
             // https://www.baeldung.com/gson-list#:~:text=Gson%20can%20serialize%20a%20collection,the%20data%20without%20additional%20information.
             List<String> locationsFromGson = gson.fromJson(locationsJson, ArrayList.class);
             mapViewModel.queryLocationById(locationsFromGson);
@@ -365,6 +368,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Gson gson = new Gson();
         String cameraJson = gson.toJson(myCam);
         editor.putString("cameraJson", cameraJson);
+
+        // Persist query
+        EditText searchText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        editor.putString("query", searchText.getText().toString());
 
         if (currentLocation != null) {
             // Persist currentLocation

@@ -53,7 +53,6 @@ public class MapRepo {
                     mapModel.setSearchBarQuery(true);
                     mapModel.setLocationList(locations);
                     mapModel.setRadius(radius);
-                    mapModel.setQuery(gameTitle);
                 }
                 mutableLiveData.setValue(mapModel);
             }

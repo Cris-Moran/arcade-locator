@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements NotFoundDialogFra
                         if (querying) {
                             String gameTitle = i.getStringExtra("gameTitle");
                             setUpQuery(fragment, gameTitle);
-                            i.removeExtra("querying");
                         }
                         break;
                     case R.id.action_upload:

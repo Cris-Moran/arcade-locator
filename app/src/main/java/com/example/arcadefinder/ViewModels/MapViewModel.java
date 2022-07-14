@@ -29,6 +29,9 @@ public class MapViewModel extends ViewModel {
     }
 
     public void queryLocations(String gameTitle, double radius, ParseGeoPoint currentLocation) {
+        MapModel mapModel = mutableLiveData.getValue();
+        mapModel.setQuery(gameTitle);
+        mutableLiveData.setValue(mapModel);
         mapRepo.queryLocations(gameTitle, radius, currentLocation, mutableLiveData);
     }
 
