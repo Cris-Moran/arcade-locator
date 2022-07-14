@@ -14,6 +14,7 @@ public class MapModel {
     private String query;
     private boolean locationPermission;
     private double radius;
+    private boolean searchBarQuery;
     private Boolean queryStatus;
 
     public Boolean getQueryStatus() {
@@ -56,4 +57,11 @@ public class MapModel {
         this.query = query;
     }
 
+    public boolean isSearchBarQuery() {
+        return searchBarQuery;
+    }
+
+    public void setSearchBarQuery(boolean searchBarQuery) {
+        this.searchBarQuery = searchBarQuery;
+    }
 }

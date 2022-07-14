@@ -7,6 +7,7 @@ public class GameInfoModel {
     private ParseFile image;
     private String address;
     private String userDesc;
+    private String encodeTitle;
 
     public String getTitle() {
         return title;
@@ -38,5 +39,13 @@ public class GameInfoModel {
 
     public void setUserDesc(String userDesc) {
         this.userDesc = userDesc;
+    }
+
+    public String getEncodeTitle() {
+        return encodeTitle;
+    }
+
+    public void setEncodeTitle(String encodeTitle) {
+        this.encodeTitle = encodeTitle;
     }
 }

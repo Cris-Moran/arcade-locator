@@ -26,4 +26,5 @@ public class MainViewModel extends ViewModel {
     public void verifyLocation(GameLocation gameLocation) {
         mainRepo.verifyLocation(gameLocation, mutableLiveData);
     }
+
 }

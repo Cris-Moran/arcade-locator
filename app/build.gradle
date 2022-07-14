@@ -59,4 +59,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     // AsyncHttp Client
     implementation 'com.codepath.libraries:asynchttpclient:2.2.0'
+    // GSON for saving objects to shared prefs
+    implementation 'com.google.code.gson:gson:2.8.8'
 }

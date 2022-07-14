@@ -43,7 +43,7 @@ public class NotFoundDialogFragment extends DialogFragment {
         ArrayList<String> suggestions = bundle.getStringArrayList("suggestions");
         String[] finalSuggestions = suggestions.toArray(new String[suggestions.size()]);
         if (finalSuggestions.length > 0) {
-            builder.setTitle("Game not Found. Did you mean?")
+            builder.setTitle("Did you mean?")
                     .setItems(finalSuggestions, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // The 'which' argument contains the index position

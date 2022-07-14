@@ -47,10 +47,13 @@ public class GameInfoActivity extends AppCompatActivity {
                 ParseFile image = gameInfoModel.getImage();
                 String address = gameInfoModel.getAddress();
                 String userDesc = gameInfoModel.getUserDesc();
+                String wikiUrl = "More Info:\nhttp://en.wikipedia.org/wiki/" + gameInfoModel.getEncodeTitle();
+
                 tvMapGameTitle.setText(title);
                 Glide.with(GameInfoActivity.this).load(image.getUrl()).into(ivMapGameImage);
                 tvMapGameAddress.setText(address);
                 tvMapGameUserDesc.setText(userDesc);
+                tvGameWiki.setText(wikiUrl);
             }
         });
 

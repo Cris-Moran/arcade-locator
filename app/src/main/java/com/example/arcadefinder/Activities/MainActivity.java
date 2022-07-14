@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements NotFoundDialogFra
     private BottomNavigationView bottomNavigation;
     private MainViewModel mainViewModel;
     private ParseUser currentUser;
-    private boolean verifyStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements NotFoundDialogFra
             @Override
             public void onChanged(MainModel mainModel) {
                 currentUser = mainModel.getUser();
-                verifyStatus = mainModel.isVerifyStatus();
+                boolean verifyStatus = mainModel.isVerifyStatus();
                 if (verifyStatus) {
                     Toast.makeText(MainActivity.this, "Request was verified!", Toast.LENGTH_SHORT).show();
                 }
@@ -68,10 +67,12 @@ public class MainActivity extends AppCompatActivity implements NotFoundDialogFra
                         if (acceptingLocation) {
                             GameLocation gameLocation = i.getParcelableExtra("gameLocation");
                             mainViewModel.verifyLocation(gameLocation);
+                            i.removeExtra("acceptingLocation");
                         }
                         if (querying) {
                             String gameTitle = i.getStringExtra("gameTitle");
                             setUpQuery(fragment, gameTitle);
+                            i.removeExtra("querying");
                         }
                         break;
                     case R.id.action_upload:

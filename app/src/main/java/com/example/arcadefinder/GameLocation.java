@@ -16,6 +16,7 @@ public class GameLocation extends ParseObject {
     public static final String KEY_IMAGE = "image";
     public static final String KEY_AUTHOR = "author";
     public static final String KEY_VERIFIED = "isVerified";
+    public static final String KEY_ID = "objectId";
 
 
     public GameLocation() {
@@ -84,5 +85,6 @@ public class GameLocation extends ParseObject {
     public void setIsVerified(boolean verified) {
         put(KEY_VERIFIED, verified);
     }
+
 
 }

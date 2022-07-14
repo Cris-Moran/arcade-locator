@@ -7,12 +7,9 @@ import androidx.lifecycle.ViewModel;
 import com.example.arcadefinder.GameLocation;
 import com.example.arcadefinder.Models.MapModel;
 import com.example.arcadefinder.Repositories.MapRepo;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.Marker;
 import com.parse.ParseGeoPoint;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class MapViewModel extends ViewModel {
@@ -32,9 +29,6 @@ public class MapViewModel extends ViewModel {
     }
 
     public void queryLocations(String gameTitle, double radius, ParseGeoPoint currentLocation) {
-        MapModel mapModel = mutableLiveData.getValue();
-        mapModel.setQuery(gameTitle);
-        mutableLiveData.setValue(mapModel);
         mapRepo.queryLocations(gameTitle, radius, currentLocation, mutableLiveData);
     }
 
@@ -46,5 +40,13 @@ public class MapViewModel extends ViewModel {
 
     public HashMap<String, Object> getLocationFields(GameLocation gameLocation) {
         return mapRepo.getLocationFields(gameLocation);
+    }
+
+    public String getLocationId(GameLocation gameLocation) {
+        return mapRepo.getLocationId(gameLocation);
+    }
+
+    public void queryLocationById(List<String> ids) {
+        mapRepo.queryLocationById(ids, mutableLiveData);
     }
 }

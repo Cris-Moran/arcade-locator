@@ -49,8 +49,11 @@ public class MapRepo {
                 if (locations.isEmpty()) {
                     mapModel.setQueryStatus(false);
                 } else {
+                    mapModel.setQueryStatus(true);
+                    mapModel.setSearchBarQuery(true);
                     mapModel.setLocationList(locations);
                     mapModel.setRadius(radius);
+                    mapModel.setQuery(gameTitle);
                 }
                 mutableLiveData.setValue(mapModel);
             }
@@ -82,5 +85,35 @@ public class MapRepo {
         locationFields.put("address", address);
 
         return locationFields;
+    }
+
+    public String getLocationId(GameLocation gameLocation) {
+        return gameLocation.getObjectId();
+    }
+
+    public void queryLocationById(List<String> ids, MutableLiveData<MapModel> mutableLiveData) {
+        // specify what type of data we want to query - Post.class
+        ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
+        query.whereContainedIn(GameLocation.KEY_ID, ids);
+        query.setLimit(20);
+        // start an asynchronous call for locations
+        query.findInBackground(new FindCallback<GameLocation>() {
+            @Override
+            public void done(List<GameLocation> objects, ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting posts", e);
+                    return;
+                }
+                MapModel mapModel = mutableLiveData.getValue();
+                if (objects.isEmpty()) {
+                    mapModel.setQueryStatus(false);
+                } else {
+                    mapModel.setQueryStatus(true);
+                    mapModel.setLocationList(objects);
+                }
+                mutableLiveData.setValue(mapModel);
+            }
+        });
     }
 }

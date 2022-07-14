@@ -54,8 +54,9 @@ public class QueryActivity extends AppCompatActivity {
         btnSubmitQuery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etGameQuery.equals("")) {
-                    Toast.makeText(QueryActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
+                if (etGameQuery.getText().toString().equals("")) {
+                    Toast.makeText(QueryActivity.this, "Please type a game", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 Intent i = new Intent(QueryActivity.this, MainActivity.class);
                 i.putExtra("gameTitle", etGameQuery.getText().toString());
