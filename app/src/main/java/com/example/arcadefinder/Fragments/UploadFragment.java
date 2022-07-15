@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
@@ -14,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -103,21 +105,28 @@ public class UploadFragment extends Fragment {
             @Override
             public void onChanged(UploadModel uploadModel) {
                 // https://stackoverflow.com/a/60285340
-                if (getViewLifecycleOwner().getLifecycle().getCurrentState() == Lifecycle.State.RESUMED) {
-                    coordinates = uploadModel.getCoordinates();
-                    locationName = uploadModel.getLocationName();
-                    address = uploadModel.getAddress();
-                    boolean submitted = uploadModel.isUploadStatus();
-                    if (submitted) {
-                        Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
-                        // Reload current fragment
-                        fragmentAddress.setText("");
-                        etGame.getText().clear();
-                        etDescription.getText().clear();
-                        ivGamePic.setImageResource(R.drawable.placeholderimg);
-                    } else {
-                        Toast.makeText(getContext(), "Error submitting request", Toast.LENGTH_SHORT).show();
-                    }
+                coordinates = uploadModel.getCoordinates();
+                locationName = uploadModel.getLocationName();
+                address = uploadModel.getAddress();
+                boolean submitted = uploadModel.isUploadStatus();
+                boolean errorUploading = uploadModel.isErrorUploading();
+                if (submitted) {
+                    Toast.makeText(getContext(), "Request submitted!", Toast.LENGTH_SHORT).show();
+                    // Reload current fragment
+                    fragmentAddress.setText("");
+                    etGame.setText("");
+                    etDescription.setText("");
+                    ivGamePic.setImageResource(R.drawable.placeholderimg);
+                    file = null;
+
+                    // To make sure that we don't go in here again next time onChanged is called
+                    uploadViewModel.setUploadStatus(false);
+                    // Stop coordinates from being reassigned to it's previous value in uploadModel
+                    uploadViewModel.setCoordinates(null);
+                }
+                if (errorUploading) {
+                    Toast.makeText(getContext(), "Error while uploading", Toast.LENGTH_SHORT).show();
+                    uploadViewModel.setErrorUploading(false);
                 }
             }
         });
@@ -200,6 +209,14 @@ public class UploadFragment extends Fragment {
         fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
         uploadViewModel.getPlace(fragmentAddress);
     }
+//
+//    private void resetFragment() {
+//        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+//        if (Build.VERSION.SDK_INT >= 26) {
+//            ft.setReorderingAllowed(false);
+//        }
+//        ft.detach(this).attach(this).commit();
+//    }
 
     ActivityResultLauncher<Intent> launchCameraForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override

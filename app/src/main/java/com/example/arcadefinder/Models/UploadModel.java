@@ -18,6 +18,7 @@ public class UploadModel {
     private ParseUser author;
     private boolean uploadStatus;
     private List<String> autocompleteSuggestions;
+    private boolean errorUploading;
 
     public List<String> getAutocompleteSuggestions() {
         return autocompleteSuggestions;
@@ -97,5 +98,13 @@ public class UploadModel {
 
     public void setUploadStatus(boolean uploadStatus) {
         this.uploadStatus = uploadStatus;
+    }
+
+    public boolean isErrorUploading() {
+        return errorUploading;
+    }
+
+    public void setErrorUploading(boolean errorUploading) {
+        this.errorUploading = errorUploading;
     }
 }

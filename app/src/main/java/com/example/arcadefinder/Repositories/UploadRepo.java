@@ -104,13 +104,34 @@ public class UploadRepo {
                 uploadModel.setCoordinates(parseGeoPoint);
                 uploadModel.setLocationName(place.getName());
                 uploadModel.setAddress(place.getAddress());
-                mutableLiveData.postValue(uploadModel);
+                mutableLiveData.setValue(uploadModel);
             }
 
             @Override
             public void onError(@NonNull Status status) {
                 Log.i(TAG, "An error occurred: " + status);
+                UploadModel uploadModel = mutableLiveData.getValue();
+                uploadModel.setErrorUploading(true);
+                mutableLiveData.setValue(uploadModel);
             }
         });
+    }
+
+    public void setUploadStatus(boolean b, MutableLiveData<UploadModel> mutableLiveData) {
+        UploadModel uploadModel = mutableLiveData.getValue();
+        uploadModel.setUploadStatus(b);
+        mutableLiveData.setValue(uploadModel);
+    }
+
+    public void setErrorUploading(boolean b, MutableLiveData<UploadModel> mutableLiveData) {
+        UploadModel uploadModel = mutableLiveData.getValue();
+        uploadModel.setErrorUploading(b);
+        mutableLiveData.setValue(uploadModel);
+    }
+
+    public void setCoordinates(ParseGeoPoint coords, MutableLiveData<UploadModel> mutableLiveData) {
+        UploadModel uploadModel = mutableLiveData.getValue();
+        uploadModel.setCoordinates(coords);
+        mutableLiveData.setValue(uploadModel);
     }
 }

@@ -7,6 +7,15 @@ public class RequestDetailsModel {
     private String addressText;
     private String description;
     private ParseFile image;
+    private boolean deleted;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
     public String getTitle() {
         return title;

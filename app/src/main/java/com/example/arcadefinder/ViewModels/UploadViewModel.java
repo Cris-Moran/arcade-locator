@@ -46,4 +46,16 @@ public class UploadViewModel extends AndroidViewModel {
     public void getPlace(AutocompleteSupportFragment fragmentAddress) {
         uploadRepo.getPlace(fragmentAddress, mutableLiveData);
     }
+
+    public void setUploadStatus(boolean b) {
+        uploadRepo.setUploadStatus(b, mutableLiveData);
+    }
+
+    public void setErrorUploading(boolean b) {
+        uploadRepo.setErrorUploading(b, mutableLiveData);
+    }
+
+    public void setCoordinates(ParseGeoPoint coords) {
+        uploadRepo.setCoordinates(coords, mutableLiveData);
+    }
 }

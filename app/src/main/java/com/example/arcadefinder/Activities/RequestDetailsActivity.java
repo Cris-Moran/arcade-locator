@@ -53,6 +53,7 @@ public class RequestDetailsActivity extends AppCompatActivity {
                 String address = requestDetailsModel.getAddressText();
                 String description = requestDetailsModel.getDescription();
                 ParseFile image = requestDetailsModel.getImage();
+                boolean deleted = requestDetailsModel.isDeleted();
 
                 tvGameTitleDetail.setText(title);
                 tvGameAddressDetail.setText(address);
@@ -60,16 +61,22 @@ public class RequestDetailsActivity extends AppCompatActivity {
                 if (image != null) {
                     Glide.with(RequestDetailsActivity.this).load(image.getUrl()).into(ivGameImageDetail);
                 }
+                if (deleted) {
+                    Toast.makeText(RequestDetailsActivity.this, "Request was rejected", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         
         btnReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(RequestDetailsActivity.this, "Request was rejected", Toast.LENGTH_SHORT).show();
+                requestDetailsViewModel.deleteLocation(gameLocation);
+                Intent i = new Intent(RequestDetailsActivity.this, AdminActivity.class);
+                startActivity(i);
             }
         });
-        
+
+        // TODO: Maybe you don't have to go back to the map..
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

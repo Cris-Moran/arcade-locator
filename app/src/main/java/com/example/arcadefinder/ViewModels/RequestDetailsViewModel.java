@@ -22,4 +22,8 @@ public class RequestDetailsViewModel extends ViewModel {
         }
         return mutableLiveData;
     }
+
+    public void deleteLocation(GameLocation gameLocation) {
+        requestDetailsRepo.deleteLocation(gameLocation, mutableLiveData);
+    }
 }

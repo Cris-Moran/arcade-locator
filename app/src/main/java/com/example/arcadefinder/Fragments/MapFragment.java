@@ -2,23 +2,17 @@ package com.example.arcadefinder.Fragments;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -46,21 +40,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.parse.ParseGeoPoint;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,6 +71,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     // Used to persist data
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
+    boolean locationPermission;
 
 
     public MapFragment() {
@@ -132,6 +123,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 // remove markers, circle, and query from persisting
                 editor.clear();
+
+                // want to keep location permission however
+                editor.putBoolean("locationPermission", locationPermission);
                 editor.apply();
             }
         });
@@ -154,6 +148,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         editor = sharedPref.edit();
 
+        locationPermission = sharedPref.getBoolean("locationPermission", false);
 
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
         mapViewModel.getMapModel().observe(getViewLifecycleOwner(), new Observer<MapModel>() {
@@ -177,7 +172,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     }
                 }
                 // Query succeeded
-                else if (!locationsToDisplay.isEmpty() && mapModel.isLocationPermission()) {
+                else if (!locationsToDisplay.isEmpty() && locationPermission) {
                     map.clear();
                     for (GameLocation location : locationsToDisplay) {
                         placeMarker(location);
@@ -268,15 +263,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        // Check for location permission
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // No location permissions, need to request them
-            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            requestLocationPermission.launch(permissions);
-        } else {
-            // Already have permission
-            mapViewModel.setLocationPermission(true);
+        if (locationPermission) {
+            // Fine location permission was granted
             getCurrentLocation();
+        } else {
+            Toast.makeText(getContext(), "Permission was denied", Toast.LENGTH_SHORT).show();
+            getDefaultLocation();
         }
     }
 
@@ -316,7 +308,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         // Now that we have location, can search for markers
-        onMapDataLoaded();
+        onUserMapDataLoaded();
     }
 
     private void displayLocation() {
@@ -337,9 +329,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     * This will run when all map data and the user's current location have been loaded
+     * This will run when all map data and the user's current location have been loaded.
+     * Will not run if location permission has been denied.
      */
-    private void onMapDataLoaded() {
+    private void onUserMapDataLoaded() {
         // Check if there is a query
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -389,22 +382,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         editor.apply();
     }
 
-
-    // TODO: Request permission before going into MapFragment
-    ActivityResultLauncher<String[]> requestLocationPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
-        @Override
-        public void onActivityResult(Map<String, Boolean> result) {
-            if (result.get(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                mapViewModel.setLocationPermission(true);
-                getCurrentLocation();
-            } else {
-                // Permission was denied
-                Toast.makeText(getContext(), "Permission was denied", Toast.LENGTH_SHORT).show();
-                mapViewModel.setLocationPermission(false);
-                getDefaultLocation();
-            }
-        }
-    });
 
     /**
      * Call if permission was not granted
