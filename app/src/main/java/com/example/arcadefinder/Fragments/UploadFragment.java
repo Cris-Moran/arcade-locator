@@ -123,8 +123,7 @@ public class UploadFragment extends Fragment {
                     uploadViewModel.setUploadStatus(false);
                     // Stop coordinates from being reassigned to it's previous value in uploadModel
                     uploadViewModel.setCoordinates(null);
-                }
-                if (errorUploading) {
+                } else if (errorUploading) {
                     Toast.makeText(getContext(), "Error while uploading", Toast.LENGTH_SHORT).show();
                     uploadViewModel.setErrorUploading(false);
                 }
@@ -209,14 +208,6 @@ public class UploadFragment extends Fragment {
         fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
         uploadViewModel.getPlace(fragmentAddress);
     }
-//
-//    private void resetFragment() {
-//        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-//        if (Build.VERSION.SDK_INT >= 26) {
-//            ft.setReorderingAllowed(false);
-//        }
-//        ft.detach(this).attach(this).commit();
-//    }
 
     ActivityResultLauncher<Intent> launchCameraForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override

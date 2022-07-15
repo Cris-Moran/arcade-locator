@@ -1,12 +1,10 @@
 package com.example.arcadefinder.Repositories;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.arcadefinder.Activities.MainActivity;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.MainModel;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -25,9 +23,9 @@ public class MainRepo {
         return mutableLiveData;
     }
 
-    public void verifyLocation(GameLocation gameLocation, MutableLiveData<MainModel> mutableLiveData) {
-        gameLocation.setIsVerified(true);
-        gameLocation.saveInBackground(new SaveCallback() {
+    public void verifyLocation(ParseGameLocation parseGameLocation, MutableLiveData<MainModel> mutableLiveData) {
+        parseGameLocation.setIsVerified(true);
+        parseGameLocation.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {

@@ -13,17 +13,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.arcadefinder.Fragments.MapFragment;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.RequestDetailsModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.RequestDetailsViewModel;
 import com.parse.ParseFile;
-import com.parse.ParseGeoPoint;
 
 public class RequestDetailsActivity extends AppCompatActivity {
 
-    GameLocation gameLocation;
+    ParseGameLocation parseGameLocation;
     ImageView ivGameImageDetail;
     TextView tvGameTitleDetail;
     TextView tvGameAddressDetail;
@@ -45,8 +43,8 @@ public class RequestDetailsActivity extends AppCompatActivity {
 
         requestDetailsViewModel = new ViewModelProvider(this).get(RequestDetailsViewModel.class);
 
-        gameLocation = getIntent().getParcelableExtra("PARSE_OBJECT_EXTRA");
-        requestDetailsViewModel.getRequestDetailsModel(gameLocation).observe(this, new Observer<RequestDetailsModel>() {
+        parseGameLocation = getIntent().getParcelableExtra("PARSE_OBJECT_EXTRA");
+        requestDetailsViewModel.getRequestDetailsModel(parseGameLocation).observe(this, new Observer<RequestDetailsModel>() {
             @Override
             public void onChanged(RequestDetailsModel requestDetailsModel) {
                 String title = requestDetailsModel.getTitle();
@@ -70,7 +68,7 @@ public class RequestDetailsActivity extends AppCompatActivity {
         btnReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestDetailsViewModel.deleteLocation(gameLocation);
+                requestDetailsViewModel.deleteLocation(parseGameLocation);
                 Intent i = new Intent(RequestDetailsActivity.this, AdminActivity.class);
                 startActivity(i);
             }
@@ -82,7 +80,7 @@ public class RequestDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(RequestDetailsActivity.this, MainActivity.class);
                 i.putExtra("acceptingLocation", true);
-                i.putExtra("gameLocation", gameLocation);
+                i.putExtra("parseGameLocation", parseGameLocation);
                 startActivity(i);
                 finish();
             }

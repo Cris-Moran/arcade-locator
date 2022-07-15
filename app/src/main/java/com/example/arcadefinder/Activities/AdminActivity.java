@@ -8,16 +8,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.arcadefinder.Adapters.RequestAdapter;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.AdminModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.AdminViewModel;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +21,7 @@ import java.util.List;
 public class AdminActivity extends AppCompatActivity {
 
     private RecyclerView rvRequests;
-    protected List<GameLocation> requests;
+    protected List<ParseGameLocation> requests;
     protected RequestAdapter adapter;
     AdminViewModel adminViewModel;
 
@@ -55,7 +51,7 @@ public class AdminActivity extends AppCompatActivity {
         adminViewModel.getAdminModel().observe(this, new Observer<AdminModel>() {
             @Override
             public void onChanged(AdminModel adminModel) {
-                List<GameLocation> locations = adminModel.getLocations();
+                List<ParseGameLocation> locations = adminModel.getLocations();
                 if (locations != null) {
                     requests.addAll(locations);
                     adapter.notifyDataSetChanged();

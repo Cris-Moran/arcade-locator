@@ -37,6 +37,7 @@ android {
 dependencies {
     // MVVM Architecture
     def lifecycle_version = "2.5.0-rc02"
+    def room_version = "2.4.2"
 
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
@@ -61,4 +62,7 @@ dependencies {
     implementation 'com.codepath.libraries:asynchttpclient:2.2.0'
     // GSON for saving objects to shared prefs
     implementation 'com.google.code.gson:gson:2.8.8'
+    // Room database for offline data loading
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 }

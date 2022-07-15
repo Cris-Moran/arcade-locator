@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.arcadefinder.Models.UploadModel;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
@@ -29,7 +29,7 @@ public class UploadRepo {
 
     public void createRequest(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, MutableLiveData<UploadModel> mutableLiveData) {
         ParseUser currentUser = ParseUser.getCurrentUser();
-        GameLocation request = new GameLocation();
+        ParseGameLocation request = new ParseGameLocation();
         request.setCoordinates(coordinates);
         request.setLocationName(locationName);
         request.setAddress(address);
@@ -42,17 +42,17 @@ public class UploadRepo {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    updateModel(coordinates, locationName, address, gameTitle, description, image, currentUser, true, mutableLiveData);
+                    updateModel(coordinates, locationName, address, gameTitle, description, image, currentUser, true, false, mutableLiveData);
                     Log.i(TAG, "createRequest: Request saved successfully");
                 } else {
                     Log.e(TAG, "saveRequest: Issue with saving request: ", e);
-                    updateModel(null, null, null, null, null, null, null, false, mutableLiveData);
+                    updateModel(null, null, null, null, null, null, null, false, true, mutableLiveData);
                 }
             }
         });
     }
 
-    private void updateModel(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser author, boolean status, MutableLiveData<UploadModel> mutableLiveData) {
+    private void updateModel(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser author, boolean success, boolean errorUploading, MutableLiveData<UploadModel> mutableLiveData) {
         UploadModel uploadModel = mutableLiveData.getValue();
         uploadModel.setCoordinates(coordinates);
         uploadModel.setLocationName(locationName);
@@ -62,7 +62,8 @@ public class UploadRepo {
         uploadModel.setImage(image);
         uploadModel.setAuthor(author);
         uploadModel.setIsVerified(false);
-        uploadModel.setUploadStatus(status);
+        uploadModel.setUploadStatus(success);
+        uploadModel.setErrorUploading(errorUploading);
         mutableLiveData.setValue(uploadModel);
     }
 
@@ -110,9 +111,6 @@ public class UploadRepo {
             @Override
             public void onError(@NonNull Status status) {
                 Log.i(TAG, "An error occurred: " + status);
-                UploadModel uploadModel = mutableLiveData.getValue();
-                uploadModel.setErrorUploading(true);
-                mutableLiveData.setValue(uploadModel);
             }
         });
     }

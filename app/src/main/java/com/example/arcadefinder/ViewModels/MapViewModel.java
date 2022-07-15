@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.MapModel;
 import com.example.arcadefinder.Repositories.MapRepo;
 import com.parse.ParseGeoPoint;
@@ -41,12 +41,12 @@ public class MapViewModel extends ViewModel {
         mutableLiveData.setValue(mapModel);
     }
 
-    public HashMap<String, Object> getLocationFields(GameLocation gameLocation) {
-        return mapRepo.getLocationFields(gameLocation);
+    public HashMap<String, Object> getLocationFields(ParseGameLocation parseGameLocation) {
+        return mapRepo.getLocationFields(parseGameLocation);
     }
 
-    public String getLocationId(GameLocation gameLocation) {
-        return mapRepo.getLocationId(gameLocation);
+    public String getLocationId(ParseGameLocation parseGameLocation) {
+        return mapRepo.getLocationId(parseGameLocation);
     }
 
     public void queryLocationById(List<String> ids) {

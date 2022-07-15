@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.arcadefinder.Activities.RequestDetailsActivity;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.R;
 import com.parse.ParseFile;
 
@@ -22,9 +22,9 @@ import java.util.List;
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHolder> {
 
     Context context;
-    List<GameLocation> requests;
+    List<ParseGameLocation> requests;
 
-    public RequestAdapter(Context context, List<GameLocation> posts) {
+    public RequestAdapter(Context context, List<ParseGameLocation> posts) {
         this.context = context;
         this.requests = posts;
     }
@@ -38,7 +38,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        GameLocation post = requests.get(position);
+        ParseGameLocation post = requests.get(position);
         // TODO: Not sure what this does..
 //        holder.ivGameImage.layout(0, 0, 0, 0);
         holder.bind(post);
@@ -73,7 +73,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
             itemView.setOnClickListener(this);
         }
 
-        public void bind(GameLocation request) {
+        public void bind(ParseGameLocation request) {
             tvGameTitle.setText(request.getTitle());
             String addressText = request.getLocationName() + "\n" + request.getAddress();
             tvAddress.setText(addressText);
@@ -92,7 +92,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
             // make sure the position is valid, i.e. actually exists in the view
             if (position != RecyclerView.NO_POSITION) {
                 // get the request at the position, this won't work if the class is static
-                GameLocation request = requests.get(position);
+                ParseGameLocation request = requests.get(position);
                 // create intent for the new activity
                 Intent i = new Intent(context, RequestDetailsActivity.class);
                 // serialize the request using parceler, use its short name as a key

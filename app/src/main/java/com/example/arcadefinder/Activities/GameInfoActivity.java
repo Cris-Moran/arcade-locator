@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.GameInfoModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.GameInfoViewModel;
@@ -31,7 +31,7 @@ public class GameInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_info);
 
         Intent i = getIntent();
-        GameLocation gameLocation = i.getParcelableExtra("gameLocation");
+        ParseGameLocation parseGameLocation = i.getParcelableExtra("parseGameLocation");
 
         tvMapGameTitle = findViewById(R.id.tvMapGameTitle);
         ivMapGameImage = findViewById(R.id.ivMapGameImage);
@@ -40,7 +40,7 @@ public class GameInfoActivity extends AppCompatActivity {
         tvGameWiki = findViewById(R.id.tvGameWiki);
 
         gameInfoViewModel = new ViewModelProvider(this).get(GameInfoViewModel.class);
-        gameInfoViewModel.getGameInfoModel(gameLocation).observe(this, new Observer<GameInfoModel>() {
+        gameInfoViewModel.getGameInfoModel(parseGameLocation).observe(this, new Observer<GameInfoModel>() {
             @Override
             public void onChanged(GameInfoModel gameInfoModel) {
                 String title = gameInfoModel.getTitle();

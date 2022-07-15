@@ -4,8 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.arcadefinder.Activities.AdminActivity;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.AdminModel;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -19,19 +18,19 @@ public class AdminRepo {
 
     public void queryRequests(MutableLiveData<AdminModel> mutableLiveData) {
         // specify what type of data we want to query - Post.class
-        ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
+        ParseQuery<ParseGameLocation> query = ParseQuery.getQuery(ParseGameLocation.class);
         // include data referred by user key
-        query.include(GameLocation.KEY_AUTHOR);
+        query.include(ParseGameLocation.KEY_AUTHOR);
         // limit query to latest 20 items
         query.setLimit(20);
         // only get queries that haven't been verified
-        query.whereEqualTo(GameLocation.KEY_VERIFIED, false);
+        query.whereEqualTo(ParseGameLocation.KEY_VERIFIED, false);
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<GameLocation>() {
+        query.findInBackground(new FindCallback<ParseGameLocation>() {
             @Override
-            public void done(List<GameLocation> requests, ParseException e) {
+            public void done(List<ParseGameLocation> requests, ParseException e) {
                 // check for errors
                 if (e != null) {
                     Log.e(TAG, "Issue with getting posts", e);

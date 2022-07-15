@@ -2,18 +2,18 @@ package com.example.arcadefinder.Repositories;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.RequestDetailsModel;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 
 public class RequestDetailsRepo {
-    public MutableLiveData<RequestDetailsModel> getRequestDetailsModel(GameLocation gameLocation) {
-        String title = gameLocation.getTitle();
-        String addressText = gameLocation.getLocationName() + "\n" + gameLocation.getAddress();
-        String description = gameLocation.getDescription();
-        ParseFile image = gameLocation.getImage();
+    public MutableLiveData<RequestDetailsModel> getRequestDetailsModel(ParseGameLocation parseGameLocation) {
+        String title = parseGameLocation.getTitle();
+        String addressText = parseGameLocation.getLocationName() + "\n" + parseGameLocation.getAddress();
+        String description = parseGameLocation.getDescription();
+        ParseFile image = parseGameLocation.getImage();
 
         RequestDetailsModel requestDetailsModel = new RequestDetailsModel();
         requestDetailsModel.setTitle(title);
@@ -26,8 +26,8 @@ public class RequestDetailsRepo {
         return mutableLiveData;
     }
 
-    public void deleteLocation(GameLocation gameLocation, MutableLiveData<RequestDetailsModel> mutableLiveData) {
-        gameLocation.deleteInBackground(new DeleteCallback() {
+    public void deleteLocation(ParseGameLocation parseGameLocation, MutableLiveData<RequestDetailsModel> mutableLiveData) {
+        parseGameLocation.deleteInBackground(new DeleteCallback() {
             @Override
             public void done(ParseException e) {
                 RequestDetailsModel requestDetailsModel = mutableLiveData.getValue();

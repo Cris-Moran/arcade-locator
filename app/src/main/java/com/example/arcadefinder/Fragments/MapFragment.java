@@ -29,7 +29,7 @@ import android.widget.Toast;
 import com.example.arcadefinder.Activities.GameInfoActivity;
 import com.example.arcadefinder.Activities.QueryActivity;
 import com.example.arcadefinder.Adapters.CustomWindowAdapter;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.MapModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.MapViewModel;
@@ -66,7 +66,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     SearchView searchView;
     MapViewModel mapViewModel;
     double circleRadius;
-    HashMap<Marker, GameLocation> markerGameLocationHashMap = new HashMap<>();
+    HashMap<Marker, ParseGameLocation> markerGameLocationHashMap = new HashMap<>();
     List<String> locations = new ArrayList<>();
     // Used to persist data
     SharedPreferences sharedPref;
@@ -154,7 +154,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapViewModel.getMapModel().observe(getViewLifecycleOwner(), new Observer<MapModel>() {
             @Override
             public void onChanged(MapModel mapModel) {
-                List<GameLocation> locationsToDisplay = mapModel.getLocationList();
+                List<ParseGameLocation> locationsToDisplay = mapModel.getLocationList();
                 Boolean queryStatus = mapModel.getQueryStatus();
                 String query = mapModel.getQuery();
                 // If a query failed
@@ -174,7 +174,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 // Query succeeded
                 else if (!locationsToDisplay.isEmpty() && locationPermission) {
                     map.clear();
-                    for (GameLocation location : locationsToDisplay) {
+                    for (ParseGameLocation location : locationsToDisplay) {
                         placeMarker(location);
                     }
 
@@ -217,17 +217,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    public void placeMarker(GameLocation gameLocation) {
-        HashMap<String, Object> fields = mapViewModel.getLocationFields(gameLocation);
+    public void placeMarker(ParseGameLocation parseGameLocation) {
+        HashMap<String, Object> fields = mapViewModel.getLocationFields(parseGameLocation);
 
         String gameTitle = (String) fields.get("gameTitle");
         String address = (String) fields.get("address");
         LatLng markerLocation = (LatLng) fields.get("markerLocation");
 
         Marker marker = map.addMarker(new MarkerOptions().position(markerLocation).title(gameTitle).snippet(address));
-        markerGameLocationHashMap.put(marker, gameLocation);
+        markerGameLocationHashMap.put(marker, parseGameLocation);
 
-        String locationId = mapViewModel.getLocationId(gameLocation);
+        String locationId = mapViewModel.getLocationId(parseGameLocation);
         locations.add(locationId);
     }
 
@@ -257,8 +257,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {
                 Intent i = new Intent(getContext(), GameInfoActivity.class);
-                GameLocation gameLocation = markerGameLocationHashMap.get(marker);
-                i.putExtra("gameLocation", gameLocation);
+                ParseGameLocation parseGameLocation = markerGameLocationHashMap.get(marker);
+                i.putExtra("parseGameLocation", parseGameLocation);
                 startActivity(i);
             }
         });

@@ -2,7 +2,6 @@ package com.example.arcadefinder.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 import com.example.arcadefinder.Fragments.GuestFragment;
 import com.example.arcadefinder.Fragments.MapFragment;
 import com.example.arcadefinder.Fragments.NotFoundDialogFragment;
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.MainModel;
 import com.example.arcadefinder.Fragments.ProfileFragment;
 import com.example.arcadefinder.R;
@@ -65,8 +64,8 @@ public class MainActivity extends AppCompatActivity implements NotFoundDialogFra
                     case R.id.action_map:
                         fragment = new MapFragment();
                         if (acceptingLocation) {
-                            GameLocation gameLocation = i.getParcelableExtra("gameLocation");
-                            mainViewModel.verifyLocation(gameLocation);
+                            ParseGameLocation parseGameLocation = i.getParcelableExtra("parseGameLocation");
+                            mainViewModel.verifyLocation(parseGameLocation);
                             i.removeExtra("acceptingLocation");
                         }
                         if (querying) {

@@ -1,18 +1,18 @@
 package com.example.arcadefinder.Models;
 
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 
 import java.util.List;
 
 public class AdminModel {
 
-    List<GameLocation> locations;
+    List<ParseGameLocation> locations;
 
-    public List<GameLocation> getLocations() {
+    public List<ParseGameLocation> getLocations() {
         return locations;
     }
 
-    public void setLocations(List<GameLocation> locations) {
+    public void setLocations(List<ParseGameLocation> locations) {
         this.locations = locations;
     }
 }

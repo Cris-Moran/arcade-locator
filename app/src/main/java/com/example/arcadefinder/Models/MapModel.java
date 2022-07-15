@@ -1,16 +1,12 @@
 package com.example.arcadefinder.Models;
 
-import com.example.arcadefinder.GameLocation;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.Marker;
+import com.example.arcadefinder.ParseGameLocation;
 
 import java.util.List;
-import java.util.Map;
 
 public class MapModel {
 
-    private List<GameLocation> locationList;
+    private List<ParseGameLocation> locationList;
     private String query;
     private boolean locationPermission;
     private double radius;
@@ -41,11 +37,11 @@ public class MapModel {
         this.locationPermission = locationPermission;
     }
 
-    public List<GameLocation> getLocationList() {
+    public List<ParseGameLocation> getLocationList() {
         return locationList;
     }
 
-    public void setLocationList(List<GameLocation> locationList) {
+    public void setLocationList(List<ParseGameLocation> locationList) {
         this.locationList = locationList;
     }
 

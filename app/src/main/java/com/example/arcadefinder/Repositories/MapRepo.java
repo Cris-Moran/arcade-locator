@@ -4,21 +4,16 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.arcadefinder.Activities.AdminActivity;
-import com.example.arcadefinder.GameLocation;
-import com.example.arcadefinder.Models.LoginModel;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.MapModel;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class MapRepo {
@@ -27,19 +22,19 @@ public class MapRepo {
 
     public void queryLocations(String gameTitle, double radius, ParseGeoPoint currentLocation, MutableLiveData<MapModel> mutableLiveData) {
         // specify what type of data we want to query - Post.class
-        ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
+        ParseQuery<ParseGameLocation> query = ParseQuery.getQuery(ParseGameLocation.class);
         // get queries near a certain radius
-        query.whereWithinMiles(GameLocation.KEY_COORDINATES, currentLocation, radius);
+        query.whereWithinMiles(ParseGameLocation.KEY_COORDINATES, currentLocation, radius);
         // get only locations that are verified
-        query.whereEqualTo(GameLocation.KEY_VERIFIED, true);
+        query.whereEqualTo(ParseGameLocation.KEY_VERIFIED, true);
         // get locations with the correct title
-        query.whereEqualTo(GameLocation.KEY_TITLE, gameTitle);
+        query.whereEqualTo(ParseGameLocation.KEY_TITLE, gameTitle);
         // limit query to latest 50 items
         query.setLimit(20);
         // start an asynchronous call for locations
-        query.findInBackground(new FindCallback<GameLocation>() {
+        query.findInBackground(new FindCallback<ParseGameLocation>() {
             @Override
-            public void done(List<GameLocation> locations, ParseException e) {
+            public void done(List<ParseGameLocation> locations, ParseException e) {
                 // check for errors
                 if (e != null) {
                     Log.e(TAG, "Issue with getting posts", e);
@@ -63,21 +58,21 @@ public class MapRepo {
     public MutableLiveData<MapModel> getMapModel() {
         final MutableLiveData<MapModel> mutableLiveData = new MutableLiveData<>();
         MapModel mapModel = new MapModel();
-        List<GameLocation> gameLocations = new ArrayList<>();
-        mapModel.setLocationList(gameLocations);
+        List<ParseGameLocation> parseGameLocations = new ArrayList<>();
+        mapModel.setLocationList(parseGameLocations);
         mutableLiveData.setValue(mapModel);
         return mutableLiveData;
     }
 
-    public HashMap<String, Object> getLocationFields(GameLocation gameLocation) {
+    public HashMap<String, Object> getLocationFields(ParseGameLocation parseGameLocation) {
         HashMap<String, Object> locationFields = new HashMap<>();
 
-        ParseGeoPoint coordinates = gameLocation.getCoordinates();
+        ParseGeoPoint coordinates = parseGameLocation.getCoordinates();
         double lat = coordinates.getLatitude();
         double lng = coordinates.getLongitude();
         LatLng markerLocation = new LatLng(lat, lng);
-        String gameTitle = gameLocation.getTitle();
-        String address = gameLocation.getAddress();
+        String gameTitle = parseGameLocation.getTitle();
+        String address = parseGameLocation.getAddress();
 
         locationFields.put("markerLocation", markerLocation);
         locationFields.put("gameTitle", gameTitle);
@@ -86,19 +81,19 @@ public class MapRepo {
         return locationFields;
     }
 
-    public String getLocationId(GameLocation gameLocation) {
-        return gameLocation.getObjectId();
+    public String getLocationId(ParseGameLocation parseGameLocation) {
+        return parseGameLocation.getObjectId();
     }
 
     public void queryLocationById(List<String> ids, MutableLiveData<MapModel> mutableLiveData) {
         // specify what type of data we want to query - Post.class
-        ParseQuery<GameLocation> query = ParseQuery.getQuery(GameLocation.class);
-        query.whereContainedIn(GameLocation.KEY_ID, ids);
+        ParseQuery<ParseGameLocation> query = ParseQuery.getQuery(ParseGameLocation.class);
+        query.whereContainedIn(ParseGameLocation.KEY_ID, ids);
         query.setLimit(20);
         // start an asynchronous call for locations
-        query.findInBackground(new FindCallback<GameLocation>() {
+        query.findInBackground(new FindCallback<ParseGameLocation>() {
             @Override
-            public void done(List<GameLocation> objects, ParseException e) {
+            public void done(List<ParseGameLocation> objects, ParseException e) {
                 // check for errors
                 if (e != null) {
                     Log.e(TAG, "Issue with getting posts", e);

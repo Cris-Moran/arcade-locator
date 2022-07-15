@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.arcadefinder.GameLocation;
+import com.example.arcadefinder.ParseGameLocation;
 import com.example.arcadefinder.Models.GameInfoModel;
 import com.example.arcadefinder.Repositories.GameInfoRepo;
 
@@ -16,9 +16,9 @@ public class GameInfoViewModel extends ViewModel {
         this.gameInfoRepo = new GameInfoRepo();
     }
 
-    public LiveData<GameInfoModel> getGameInfoModel(GameLocation gameLocation) {
+    public LiveData<GameInfoModel> getGameInfoModel(ParseGameLocation parseGameLocation) {
         if (mutableLiveData == null) {
-            mutableLiveData = gameInfoRepo.getGameInfoModel(gameLocation);
+            mutableLiveData = gameInfoRepo.getGameInfoModel(parseGameLocation);
         }
         return mutableLiveData;
     }
