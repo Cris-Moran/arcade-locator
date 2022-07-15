@@ -42,26 +42,25 @@ public class UploadRepo {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    updateModel(coordinates, locationName, address, gameTitle, description, image, currentUser, true, false, mutableLiveData);
+                    updateModel(true, false, mutableLiveData);
                     Log.i(TAG, "createRequest: Request saved successfully");
                 } else {
                     Log.e(TAG, "saveRequest: Issue with saving request: ", e);
-                    updateModel(null, null, null, null, null, null, null, false, true, mutableLiveData);
+                    updateModel(false, true, mutableLiveData);
                 }
             }
         });
     }
 
-    private void updateModel(ParseGeoPoint coordinates, String locationName, String address, String gameTitle, String description, ParseFile image, ParseUser author, boolean success, boolean errorUploading, MutableLiveData<UploadModel> mutableLiveData) {
+    private void updateModel(boolean success, boolean errorUploading, MutableLiveData<UploadModel> mutableLiveData) {
         UploadModel uploadModel = mutableLiveData.getValue();
-        uploadModel.setCoordinates(coordinates);
-        uploadModel.setLocationName(locationName);
-        uploadModel.setAddress(address);
-        uploadModel.setTitle(gameTitle);
-        uploadModel.setDescription(description);
-        uploadModel.setImage(image);
-        uploadModel.setAuthor(author);
-        uploadModel.setIsVerified(false);
+        uploadModel.setCoordinates(null);
+        uploadModel.setLocationName("");
+        uploadModel.setAddress("");
+        uploadModel.setTitle("");
+        uploadModel.setDescription("");
+        uploadModel.setImage(null);
+        uploadModel.setAuthor(null);
         uploadModel.setUploadStatus(success);
         uploadModel.setErrorUploading(errorUploading);
         mutableLiveData.setValue(uploadModel);
@@ -102,6 +101,8 @@ public class UploadRepo {
                 UploadModel uploadModel = mutableLiveData.getValue();
                 LatLng latLng = place.getLatLng();
                 ParseGeoPoint parseGeoPoint = new ParseGeoPoint(latLng.latitude, latLng.longitude);
+                uploadModel.setUploadStatus(false);
+                uploadModel.setErrorUploading(false);
                 uploadModel.setCoordinates(parseGeoPoint);
                 uploadModel.setLocationName(place.getName());
                 uploadModel.setAddress(place.getAddress());

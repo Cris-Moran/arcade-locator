@@ -118,14 +118,8 @@ public class UploadFragment extends Fragment {
                     etDescription.setText("");
                     ivGamePic.setImageResource(R.drawable.placeholderimg);
                     file = null;
-
-                    // To make sure that we don't go in here again next time onChanged is called
-                    uploadViewModel.setUploadStatus(false);
-                    // Stop coordinates from being reassigned to it's previous value in uploadModel
-                    uploadViewModel.setCoordinates(null);
                 } else if (errorUploading) {
                     Toast.makeText(getContext(), "Error while uploading", Toast.LENGTH_SHORT).show();
-                    uploadViewModel.setErrorUploading(false);
                 }
             }
         });
@@ -135,6 +129,8 @@ public class UploadFragment extends Fragment {
             public void onClick(View v) {
                 String gameTitle = etGame.getText().toString();
                 String description = etDescription.getText().toString();
+                uploadViewModel.setUploadStatus(false);
+                uploadViewModel.setErrorUploading(false);
                 if (file == null || coordinates == null || gameTitle.equals("") || description.equals("")) {
                     Toast.makeText(getContext(), "Please fill out all fields before submitting", Toast.LENGTH_SHORT).show();
                 } else {

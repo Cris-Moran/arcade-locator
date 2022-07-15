@@ -18,28 +18,28 @@ public class RoomGameLocation {
 
     @PrimaryKey
     private int id;
-    private Date createdAt;
-    private Date updatedAt;
-    private LatLng coordinates;
+//    private Date createdAt;
+//    private Date updatedAt;
+//    private LatLng coordinates;
     private String locationName;
     private String address;
     private String title;
     private String description;
-    private Bitmap image;
+//    private Bitmap image;
     private boolean verified;
-    private ParseUser author;
+//    private ParseUser author;
 
-    public RoomGameLocation(Date createdAt, Date updatedAt, LatLng coordinates, String locationName, String address, String title, String description, Bitmap image, boolean verified, ParseUser author) {
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.coordinates = coordinates;
+    public RoomGameLocation(String locationName, String address, String title, String description, boolean verified) {
+//        this.createdAt = createdAt;
+//        this.updatedAt = updatedAt;
+//        this.coordinates = coordinates;
         this.locationName = locationName;
         this.address = address;
         this.title = title;
         this.description = description;
-        this.image = image;
+//        this.image = image;
         this.verified = verified;
-        this.author = author;
+//        this.author = author;
     }
 
     public void setId(int id) {
@@ -50,17 +50,17 @@ public class RoomGameLocation {
         return id;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+//    public Date getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public Date getUpdatedAt() {
+//        return updatedAt;
+//    }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public LatLng getCoordinates() {
-        return coordinates;
-    }
+//    public LatLng getCoordinates() {
+//        return coordinates;
+//    }
 
     public String getLocationName() {
         return locationName;
@@ -78,15 +78,15 @@ public class RoomGameLocation {
         return description;
     }
 
-    public Bitmap getImage() {
-        return image;
-    }
+//    public Bitmap getImage() {
+//        return image;
+//    }
 
     public boolean isVerified() {
         return verified;
     }
 
-    public ParseUser getAuthor() {
-        return author;
-    }
+//    public ParseUser getAuthor() {
+//        return author;
+//    }
 }
