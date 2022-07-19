@@ -2,65 +2,111 @@ package com.example.arcadefinder;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.parse.ParseFile;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseUser;
+import org.parceler.Parcel;
 
 import java.util.Date;
-import java.util.List;
 
+@Parcel
 @Entity(tableName = "location_table")
 public class RoomGameLocation {
 
     @PrimaryKey
-    private int id;
-//    private Date createdAt;
-//    private Date updatedAt;
-//    private LatLng coordinates;
+    @NonNull
+    private String id;
+
+    private Date createdAt;
+    private Date updatedAt;
+    private double longitude;
+    private double latitude;
     private String locationName;
     private String address;
     private String title;
     private String description;
-//    private Bitmap image;
+    private Bitmap image;
     private boolean verified;
-//    private ParseUser author;
+    private String username;
 
-    public RoomGameLocation(String locationName, String address, String title, String description, boolean verified) {
-//        this.createdAt = createdAt;
-//        this.updatedAt = updatedAt;
-//        this.coordinates = coordinates;
+    public RoomGameLocation(String id, Date createdAt, Date updatedAt, String locationName, String address, String title, String description, Bitmap image, boolean verified, String username, double longitude, double latitude) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.locationName = locationName;
         this.address = address;
         this.title = title;
         this.description = description;
-//        this.image = image;
+        this.image = image;
         this.verified = verified;
-//        this.author = author;
+        this.username = username;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public RoomGameLocation() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-//    public Date getCreatedAt() {
-//        return createdAt;
-//    }
-//
-//    public Date getUpdatedAt() {
-//        return updatedAt;
-//    }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-//    public LatLng getCoordinates() {
-//        return coordinates;
-//    }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
     public String getLocationName() {
         return locationName;
@@ -78,15 +124,23 @@ public class RoomGameLocation {
         return description;
     }
 
-//    public Bitmap getImage() {
-//        return image;
-//    }
+    public Bitmap getImage() {
+        return image;
+    }
 
     public boolean isVerified() {
         return verified;
     }
 
-//    public ParseUser getAuthor() {
-//        return author;
-//    }
+    public String getUsername() {
+        return username;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
 }

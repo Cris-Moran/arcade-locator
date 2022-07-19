@@ -1,22 +1,38 @@
 package com.example.arcadefinder.Repositories;
 
+import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.arcadefinder.GameLocationDao;
+import com.example.arcadefinder.GameLocationDatabase;
+import com.example.arcadefinder.Models.GameLocationModel;
 import com.example.arcadefinder.ParseGameLocation;
-import com.example.arcadefinder.Models.AdminModel;
+import com.example.arcadefinder.RoomGameLocation;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminRepo {
 
     final String TAG = getClass().getSimpleName();
 
-    public void queryRequests(MutableLiveData<AdminModel> mutableLiveData) {
+    private GameLocationDao gameLocationDao;
+
+    public AdminRepo(Application application) {
+        GameLocationDatabase database = GameLocationDatabase.getInstance(application);
+        gameLocationDao = database.gameLocationDao();
+    }
+
+    public void queryRequests(MutableLiveData<List<GameLocationModel>> mutableLiveData) {
         // specify what type of data we want to query - Post.class
         ParseQuery<ParseGameLocation> query = ParseQuery.getQuery(ParseGameLocation.class);
         // include data referred by user key
@@ -38,17 +54,94 @@ public class AdminRepo {
                 }
 
                 // save received posts to list and notify adapter of new data
-                AdminModel adminModel = mutableLiveData.getValue();
-                adminModel.setLocations(requests);
-                mutableLiveData.setValue(adminModel);
+                List<GameLocationModel> gameLocationModels = mutableLiveData.getValue();
+                ArrayList<RoomGameLocation> newLocations = new ArrayList<>();
+                for (ParseGameLocation location : requests) {
+                    parseToModel(location, gameLocationModels);
+                    saveToRoom(location, newLocations);
+                }
+                gameLocationDao.insertAll(newLocations.toArray(new RoomGameLocation[newLocations.size()]));
+                mutableLiveData.setValue(gameLocationModels);
             }
         });
     }
 
-    public MutableLiveData<AdminModel> getAdminModel() {
-        MutableLiveData<AdminModel> mutableLiveData = new MutableLiveData<>();
-        AdminModel adminModel = new AdminModel();
-        mutableLiveData.setValue(adminModel);
-        return mutableLiveData;
+    private void parseToModel(ParseGameLocation location, List<GameLocationModel> gameLocationModels) {
+        // Type conversions
+        ParseGeoPoint coordinates = location.getCoordinates();
+        double longitude = coordinates.getLongitude();
+        double latitude = coordinates.getLatitude();
+        // Convert parseFile to bitmap
+        byte[] byteArray;
+        try {
+            byteArray = location.getImage().getData();
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        Bitmap image = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+        GameLocationModel gameLocationModel = new GameLocationModel();
+        gameLocationModel.setId(location.getObjectId());
+        gameLocationModel.setCreatedAt(location.getCreatedAt());
+        gameLocationModel.setUpdatedAt(location.getUpdatedAt());
+        gameLocationModel.setLongitude(longitude);
+        gameLocationModel.setLatitude(latitude);
+        gameLocationModel.setLocationName(location.getLocationName());
+        gameLocationModel.setAddress(location.getAddress());
+        gameLocationModel.setTitle(location.getTitle());
+        gameLocationModel.setDescription(location.getDescription());
+        gameLocationModel.setImage(image);
+        gameLocationModel.setVerified(location.getIsVerified());
+        gameLocationModel.setUsername(location.getAuthor().getUsername());
+
+        gameLocationModels.add(gameLocationModel);
     }
+
+    private void saveToRoom(ParseGameLocation location, ArrayList<RoomGameLocation> newLocations) {
+        // Convert parseFile to bitmap
+        byte[] byteArray;
+        try {
+            byteArray = location.getImage().getData();
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        Bitmap image = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        // Get ParseGeoPoint
+        ParseGeoPoint coordinates = location.getCoordinates();
+
+        // Populate room object with appropriate fields
+        newLocations.add(new RoomGameLocation(location.getObjectId(), location.getCreatedAt(), location.getUpdatedAt(),
+                location.getLocationName(), location.getAddress(), location.getTitle(), location.getDescription(), image,
+                location.getIsVerified(), location.getAuthor().getUsername(), coordinates.getLongitude(), coordinates.getLatitude()));
+    }
+
+    public void getRequestsOffline(MutableLiveData<List<GameLocationModel>> mutableLiveData) {
+        LiveData<List<RoomGameLocation>> roomGameLocations = gameLocationDao.getUnverifiedLocations();
+        List<RoomGameLocation> roomGameLocationsList = roomGameLocations.getValue();
+        List<GameLocationModel> gameLocationModel = new ArrayList<>();
+        for (RoomGameLocation location : roomGameLocationsList) {
+            roomToModel(location, gameLocationModel);
+        }
+        mutableLiveData.setValue(gameLocationModel);
+    }
+
+    private void roomToModel(RoomGameLocation location, List<GameLocationModel> gameLocationModels) {
+        GameLocationModel gameLocationModel = new GameLocationModel();
+        gameLocationModel.setId(location.getId());
+        gameLocationModel.setCreatedAt(location.getCreatedAt());
+        gameLocationModel.setUpdatedAt(location.getUpdatedAt());
+        gameLocationModel.setLongitude(location.getLongitude());
+        gameLocationModel.setLatitude(location.getLatitude());
+        gameLocationModel.setLocationName(location.getLocationName());
+        gameLocationModel.setAddress(location.getAddress());
+        gameLocationModel.setTitle(location.getTitle());
+        gameLocationModel.setDescription(location.getDescription());
+        gameLocationModel.setImage(location.getImage());
+        gameLocationModel.setVerified(location.isVerified());
+        gameLocationModel.setUsername(location.getUsername());
+        gameLocationModels.add(gameLocationModel);
+    }
+
 }

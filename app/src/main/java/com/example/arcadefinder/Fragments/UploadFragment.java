@@ -222,7 +222,7 @@ public class UploadFragment extends Fragment {
                 }
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-                byte[] bitmapdata = bos.toByteArray();
+                byte[] bitMapData = bos.toByteArray();
 
                 //write the bytes in file
                 FileOutputStream fos = null;
@@ -232,7 +232,7 @@ public class UploadFragment extends Fragment {
                     e.printStackTrace();
                 }
                 try {
-                    fos.write(bitmapdata);
+                    fos.write(bitMapData);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

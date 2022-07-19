@@ -15,12 +15,15 @@ public interface GameLocationDao {
     @Insert
     void insert(RoomGameLocation roomGameLocation);
 
+    @Insert
+    void insertAll(RoomGameLocation... roomGameLocations);
+
     @Update
     void update(RoomGameLocation roomGameLocation);
 
     @Delete
     void delete(RoomGameLocation roomGameLocation);
-//
-//    @Query("SELECT * FROM location_table WHERE verified ORDER BY createdAt DESC")
-//    LiveData<List<RoomGameLocation>> getUnverifiedLocations();
+
+    @Query("SELECT * FROM location_table WHERE verified = 0 ORDER BY createdAt DESC")
+    LiveData<List<RoomGameLocation>> getUnverifiedLocations();
 }
