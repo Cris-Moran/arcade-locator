@@ -23,6 +23,7 @@ public class AdminViewModel extends AndroidViewModel {
     MutableLiveData<List<GameLocationModel>> mutableLiveData;
     AdminRepo adminRepo;
 
+    // In practice, not good to pass application dependency
     public AdminViewModel(@NonNull Application application) {
         super(application);
         adminRepo = new AdminRepo(application);
@@ -31,7 +32,7 @@ public class AdminViewModel extends AndroidViewModel {
     // Observe change to both parseGameLocation and allGameLocations
     public LiveData<List<GameLocationModel>> getGameLocations() {
         if (mutableLiveData == null) {
-            mutableLiveData = new MutableLiveData<>();
+            mutableLiveData = adminRepo.getGameLocation();
         }
         return mutableLiveData;
     }

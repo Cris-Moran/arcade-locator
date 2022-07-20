@@ -1,13 +1,16 @@
 package com.example.arcadefinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -54,8 +57,10 @@ public class AdminActivity extends AppCompatActivity {
         adminViewModel.getGameLocations().observe(this, new Observer<List<GameLocationModel>>() {
             @Override
             public void onChanged(List<GameLocationModel> gameLocationModels) {
-                locationRequests.addAll(gameLocationModels);
-                adapter.notifyDataSetChanged();
+                if (!gameLocationModels.isEmpty()) {
+                    locationRequests.addAll(gameLocationModels);
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
 
@@ -69,6 +74,7 @@ public class AdminActivity extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("MissingPermission")
     // https://stackoverflow.com/a/57284789
     private Boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

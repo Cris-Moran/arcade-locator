@@ -275,7 +275,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     /**
      * Only call if permission was granted
      */
-    @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);

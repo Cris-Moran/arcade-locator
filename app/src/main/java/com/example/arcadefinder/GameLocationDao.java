@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -15,15 +16,16 @@ public interface GameLocationDao {
     @Insert
     void insert(RoomGameLocation roomGameLocation);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(RoomGameLocation... roomGameLocations);
 
     @Update
     void update(RoomGameLocation roomGameLocation);
 
-    @Delete
-    void delete(RoomGameLocation roomGameLocation);
+    @Query("DELETE FROM location_table WHERE id = :objectId")
+    void delete(String objectId);
 
-    @Query("SELECT * FROM location_table WHERE verified = 0 ORDER BY createdAt DESC")
-    LiveData<List<RoomGameLocation>> getUnverifiedLocations();
+    @Query("SELECT * FROM location_table ORDER BY createdAt DESC")
+    List<RoomGameLocation> getUnverifiedLocations();
+
 }

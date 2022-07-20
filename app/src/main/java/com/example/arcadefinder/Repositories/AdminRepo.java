@@ -3,10 +3,14 @@ package com.example.arcadefinder.Repositories;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.room.Room;
 
 import com.example.arcadefinder.GameLocationDao;
 import com.example.arcadefinder.GameLocationDatabase;
@@ -20,6 +24,8 @@ import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class AdminRepo {
 
@@ -49,7 +55,7 @@ public class AdminRepo {
             public void done(List<ParseGameLocation> requests, ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
+                    e.printStackTrace();
                     return;
                 }
 
@@ -60,7 +66,7 @@ public class AdminRepo {
                     parseToModel(location, gameLocationModels);
                     saveToRoom(location, newLocations);
                 }
-                gameLocationDao.insertAll(newLocations.toArray(new RoomGameLocation[newLocations.size()]));
+                new InsertAllRequestsAsyncTask(gameLocationDao).execute(newLocations.toArray(new RoomGameLocation[newLocations.size()]));
                 mutableLiveData.setValue(gameLocationModels);
             }
         });
@@ -118,13 +124,17 @@ public class AdminRepo {
     }
 
     public void getRequestsOffline(MutableLiveData<List<GameLocationModel>> mutableLiveData) {
-        LiveData<List<RoomGameLocation>> roomGameLocations = gameLocationDao.getUnverifiedLocations();
-        List<RoomGameLocation> roomGameLocationsList = roomGameLocations.getValue();
-        List<GameLocationModel> gameLocationModel = new ArrayList<>();
-        for (RoomGameLocation location : roomGameLocationsList) {
-            roomToModel(location, gameLocationModel);
-        }
-        mutableLiveData.setValue(gameLocationModel);
+        GetAllRequestsAsyncTask getAllRequestsAsyncTask = new GetAllRequestsAsyncTask(gameLocationDao, new AsyncResponse() {
+            @Override
+            public void onFinished(List<RoomGameLocation> gameLocationModels) {
+                List<GameLocationModel> gameLocationModel = new ArrayList<>();
+                for (RoomGameLocation location : gameLocationModels) {
+                    roomToModel(location, gameLocationModel);
+                }
+                mutableLiveData.setValue(gameLocationModel);
+            }
+        });
+        getAllRequestsAsyncTask.execute();
     }
 
     private void roomToModel(RoomGameLocation location, List<GameLocationModel> gameLocationModels) {
@@ -142,6 +152,52 @@ public class AdminRepo {
         gameLocationModel.setVerified(location.isVerified());
         gameLocationModel.setUsername(location.getUsername());
         gameLocationModels.add(gameLocationModel);
+    }
+
+    public MutableLiveData<List<GameLocationModel>> getGameLocation() {
+        final MutableLiveData<List<GameLocationModel>> mutableLiveData = new MutableLiveData<>();
+        List<GameLocationModel> locations = new ArrayList<>();
+        mutableLiveData.setValue(locations);
+        return mutableLiveData;
+    }
+
+    private static class InsertAllRequestsAsyncTask extends AsyncTask<RoomGameLocation, Void, Void> {
+        private GameLocationDao gameLocationDao;
+
+        private InsertAllRequestsAsyncTask(GameLocationDao gameLocationDao) {
+            this.gameLocationDao = gameLocationDao;
+        }
+
+        @Override
+        protected Void doInBackground(RoomGameLocation... roomGameLocations) {
+            gameLocationDao.insertAll(roomGameLocations);
+            return null;
+        }
+    }
+
+    private static class GetAllRequestsAsyncTask extends AsyncTask<Void, Void, List<RoomGameLocation>> {
+        private GameLocationDao gameLocationDao;
+        private AsyncResponse delegate;
+
+        private GetAllRequestsAsyncTask(GameLocationDao gameLocationDao, AsyncResponse asyncResponse) {
+            this.gameLocationDao = gameLocationDao;
+            this.delegate = asyncResponse;
+        }
+
+        @Override
+        protected List<RoomGameLocation> doInBackground(Void... Voids) {
+            return gameLocationDao.getUnverifiedLocations();
+        }
+
+        @Override
+        protected void onPostExecute(List<RoomGameLocation> roomGameLocations) {
+            super.onPostExecute(roomGameLocations);
+            delegate.onFinished(roomGameLocations);
+        }
+    }
+
+    private interface AsyncResponse {
+        void onFinished(List<RoomGameLocation> gameLocationModels);
     }
 
 }

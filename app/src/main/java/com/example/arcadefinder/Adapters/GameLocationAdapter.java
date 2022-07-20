@@ -95,7 +95,7 @@ public class GameLocationAdapter extends RecyclerView.Adapter<GameLocationAdapte
                 // create intent for the new activity
                 Intent i = new Intent(context, RequestDetailsActivity.class);
                 // serialize the request using parceler, use its short name as a key
-                i.putExtra(RoomGameLocation.class.getSimpleName(), Parcels.wrap(request));
+                i.putExtra(GameLocationModel.class.getSimpleName(), Parcels.wrap(request));
                 // show the activity
                 context.startActivity(i);
             }
