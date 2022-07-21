@@ -1,6 +1,8 @@
 package com.example.arcadefinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,12 +21,16 @@ import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.arcadefinder.Models.QueryModel;
 import com.example.arcadefinder.R;
+import com.example.arcadefinder.ViewModels.QueryViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import okhttp3.Headers;
@@ -37,6 +43,7 @@ public class QueryActivity extends AppCompatActivity {
     Spinner spinnerRadii;
     Button btnSubmitQuery;
     ArrayList<String> suggestions = new ArrayList<>();
+    QueryViewModel queryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,36 @@ public class QueryActivity extends AppCompatActivity {
             }
         });
 
+        queryViewModel = new ViewModelProvider(this).get(QueryViewModel.class);
+        queryViewModel.getQueryModel().observe(this, new Observer<QueryModel>() {
+            @Override
+            public void onChanged(QueryModel queryModel) {
+                JSONObject jsonObject = queryModel.getResponse();
+                if (jsonObject != null) {
+                    try {
+                        suggestions.clear();
+                        JSONObject results = jsonObject.getJSONObject("query");
+                        JSONArray search = results.getJSONArray("search");
+                        // Get 5 or less elements
+                        int iterateLen = 5;
+                        if (search.length() < 5) {
+                            iterateLen = search.length();
+                        }
+                        for (int i = 0; i < iterateLen; i++) {
+                            JSONObject item = search.getJSONObject(i);
+                            String title = item.getString("title");
+                            suggestions.add(title);
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, suggestions);
+                        etGameQuery.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
         etGameQuery.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -82,41 +119,14 @@ public class QueryActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Replace spaces with %20 to make safe for links
-                String searchQuery = s.toString().replace(" ", "%20");
-                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", searchQuery);
-
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.get(wikiQueryURL, new JsonHttpResponseHandler() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        suggestions.clear();
-                        JSONObject jsonObject = json.jsonObject;
-                        try {
-                            JSONObject results = jsonObject.getJSONObject("query");
-                            JSONArray search = results.getJSONArray("search");
-                            int iterateLen = 5;
-                            if (search.length() < 5) {
-                                iterateLen = search.length();
-                            }
-
-                            for (int i = 0; i < iterateLen; i++) {
-                                JSONObject item = search.getJSONObject(i);
-                                String title = item.getString("title");
-                                suggestions.add(title);
-                            }
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, suggestions);
-                            etGameQuery.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                    }
-                });
+                String encodeTitle = "";
+                try {
+                    encodeTitle = URLEncoder.encode(s.toString(), "UTF-8").replace("+", "%20");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", encodeTitle);
+                queryViewModel.getLocations(wikiQueryURL);
             }
 
             @Override
