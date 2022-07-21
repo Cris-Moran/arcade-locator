@@ -149,6 +149,13 @@ public class UploadFragment extends Fragment {
             }
         });
 
+        ivGamePic.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                changeUploadImage();
+                return true;
+            }
+        });
 
         etGame.addTextChangedListener(new TextWatcher() {
             @Override
@@ -203,8 +210,7 @@ public class UploadFragment extends Fragment {
         btnUploadPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent takePicIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                launchCameraForResult.launch(takePicIntent);
+                changeUploadImage();
             }
         });
 
@@ -212,6 +218,11 @@ public class UploadFragment extends Fragment {
 
         fragmentAddress.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
         uploadViewModel.getPlace(fragmentAddress);
+    }
+
+    private void changeUploadImage() {
+        Intent takePicIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        launchCameraForResult.launch(takePicIntent);
     }
 
     ActivityResultLauncher<Intent> launchCameraForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

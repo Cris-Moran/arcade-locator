@@ -252,7 +252,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         map = googleMap;
 
         map.setInfoWindowAdapter(new CustomWindowAdapter(getLayoutInflater()));
-        
+
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(@NonNull LatLng latLng) {
+
+            }
+        });
+
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {

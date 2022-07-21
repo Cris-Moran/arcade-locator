@@ -89,19 +89,7 @@ public class ProfileFragment extends Fragment {
         btnChangePfp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                        // permission not granted
-                        String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
-                        requestPermissionForResult.launch(permission);
-                    } else {
-                        // permission already granted
-                        pickImageFromGallery();
-                    }
-                } else {
-                    // system os less than marshmellow
-                    pickImageFromGallery();
-                }
+                changePfp();
             }
         });
 
@@ -110,6 +98,14 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), AdminActivity.class);
                 startActivity(i);
+            }
+        });
+
+        ivProfileImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                changePfp();
+                return true;
             }
         });
 
@@ -142,6 +138,22 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void changePfp() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                // permission not granted
+                String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+                requestPermissionForResult.launch(permission);
+            } else {
+                // permission already granted
+                pickImageFromGallery();
+            }
+        } else {
+            // system os less than marshmellow
+            pickImageFromGallery();
+        }
     }
 
     private void pickImageFromGallery() {
