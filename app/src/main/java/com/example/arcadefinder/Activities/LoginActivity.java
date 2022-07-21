@@ -61,16 +61,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onChanged(LoginModel loginModel) {
                 ParseUser currentUser = loginModel.getUser();
                 if (currentUser != null) {
-                    // Check for location permission
-                    if (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // No location permissions, need to request them
-                        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-                        requestLocationPermission.launch(permissions);
-                    } else {
-                        // Already have permission
-                        locationPermission = true;
-                        goMainActivity();
-                    }
+                    checkForPermission();
                 } else if (firstObservation) {
                     // Activity has been created, don't want to say failed to log in
                     firstObservation = false;
@@ -104,9 +95,21 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(LoginActivity.this, "Logged in as guest", Toast.LENGTH_SHORT).show();
-                goMainActivity();
+                checkForPermission();
             }
         });
+    }
+
+    private void checkForPermission() {
+        if (ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // No location permissions, need to request them
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            requestLocationPermission.launch(permissions);
+        } else {
+            // Already have permission
+            locationPermission = true;
+            goMainActivity();
+        }
     }
 
     private void goMainActivity() {

@@ -7,14 +7,16 @@ android:layout_height="match_parent"
 tools:context=".Activities.MainActivity">
 
 
-    <ImageView
+    <com.github.siyamed.shapeimageview.CircularImageView
         android:id="@+id/ivProfileImage"
         android:layout_width="0dp"
         android:layout_height="300dp"
         android:layout_marginTop="28dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
+        app:siBorderWidth="1dp"
+        app:siBorderColor="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/tvProfileUsername"
         tools:src="@tools:sample/avatars" />
 
