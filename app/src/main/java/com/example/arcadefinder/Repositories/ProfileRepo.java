@@ -39,10 +39,8 @@ public class ProfileRepo {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "error while saving profileModel image");
                     return;
                 }
-                Log.i(TAG, "set up profileModel image successfully!");
             }
         });
         return parseFile;

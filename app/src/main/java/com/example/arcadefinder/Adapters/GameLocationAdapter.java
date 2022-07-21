@@ -49,13 +49,6 @@ public class GameLocationAdapter extends RecyclerView.Adapter<GameLocationAdapte
         return requests.size();
     }
 
-    /**
-     * For refreshing
-     */
-    public void clear() {
-        requests.clear();
-        notifyDataSetChanged();
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 

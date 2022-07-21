@@ -24,6 +24,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_bottom_navigation" />
-<!--        TODO: Guide said to use "layout_gravity" but I can't use it in a ConstraintLayout: https://nirvikbasnet.medium.com/androidx-bottomnavigationbar-with-constraint-layout-and-fragments-90f7deffff9e -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

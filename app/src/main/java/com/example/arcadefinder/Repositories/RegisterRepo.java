@@ -28,12 +28,9 @@ public class RegisterRepo {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Log.i(TAG, "signed up successfully!");
                     RegisterModel registerModel = mutableLiveData.getValue();
                     registerModel.setUser(ParseUser.getCurrentUser());
                     mutableLiveData.setValue(registerModel);
-                } else {
-                    Log.e(TAG, "error while signing up: ", e);
                 }
             }
         });

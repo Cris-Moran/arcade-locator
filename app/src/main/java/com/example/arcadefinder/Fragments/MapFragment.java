@@ -294,7 +294,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.d("MapFragment", "Error trying to get last GPS location");
                     e.printStackTrace();
                 });
     }

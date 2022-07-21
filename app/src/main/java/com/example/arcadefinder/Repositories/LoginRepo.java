@@ -21,9 +21,6 @@ public class LoginRepo {
                     LoginModel loginModel = mutableLiveData.getValue();
                     loginModel.setUser(user);
                     mutableLiveData.setValue(loginModel);
-                    Log.i(TAG, "logged in successfully");
-                } else {
-                    Log.e(TAG, "Error while logging in: ", e);
                 }
             }
         });

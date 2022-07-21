@@ -35,7 +35,6 @@ public class MapRepo {
             public void done(List<ParseGameLocation> locations, ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
                 MapModel mapModel = mutableLiveData.getValue();
@@ -94,7 +93,6 @@ public class MapRepo {
             public void done(List<ParseGameLocation> objects, ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
                 MapModel mapModel = mutableLiveData.getValue();

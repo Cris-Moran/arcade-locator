@@ -120,8 +120,6 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-
-    // TODO: Request permission before going into MapFragment
     ActivityResultLauncher<String[]> requestLocationPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
         @Override
         public void onActivityResult(Map<String, Boolean> result) {

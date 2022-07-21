@@ -55,9 +55,7 @@ public class UploadRepo {
             public void done(ParseException e) {
                 if (e == null) {
                     updateModel(true, false, mutableLiveData);
-                    Log.i(TAG, "createRequest: Request saved successfully");
                 } else {
-                    Log.e(TAG, "saveRequest: Issue with saving request: ", e);
                     updateModel(false, true, mutableLiveData);
                 }
             }
@@ -123,7 +121,6 @@ public class UploadRepo {
 
             @Override
             public void onError(@NonNull Status status) {
-                Log.i(TAG, "An error occurred: " + status);
             }
         });
     }
@@ -154,7 +151,6 @@ public class UploadRepo {
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.d(TAG, "onFailure");
             }
         });
     }

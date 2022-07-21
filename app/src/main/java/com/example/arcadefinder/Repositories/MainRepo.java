@@ -29,12 +29,9 @@ public class MainRepo {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Log.i(TAG, "done: successfully verified location");
                     MainModel mainModel = mutableLiveData.getValue();
                     mainModel.setVerifyStatus(true);
                     mutableLiveData.setValue(mainModel);
-                } else {
-                    Log.e(TAG, "done: error verifying location", e);
                 }
             }
         });
