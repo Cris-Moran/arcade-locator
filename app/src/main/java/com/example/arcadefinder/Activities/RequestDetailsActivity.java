@@ -55,14 +55,26 @@ public class RequestDetailsActivity extends AppCompatActivity {
             @Override
             public void onChanged(RequestDetailsModel requestDetailsModel) {
                 boolean deleted = requestDetailsModel.isDeleted();
+                boolean verified = requestDetailsModel.isVerified();
                 if (deleted) {
                     Toast.makeText(RequestDetailsActivity.this, "Request was deleted", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(RequestDetailsActivity.this, AdminActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    finish();
+                }
+                if (verified) {
+                    Toast.makeText(RequestDetailsActivity.this, "Request was verified", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(RequestDetailsActivity.this, AdminActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    finish();
                 }
             }
         });
 
         String title = gameLocationModel.getTitle();
-        String address = gameLocationModel.getAddress();
+        String address = gameLocationModel.getLocationName() + "\n" + gameLocationModel.getAddress();
         String description = gameLocationModel.getDescription();
         Bitmap image = gameLocationModel.getImage();
 
@@ -71,33 +83,27 @@ public class RequestDetailsActivity extends AppCompatActivity {
         tvGameDescriptionDetail.setText(description);
         ivGameImageDetail.setImageBitmap(image);
 
-        isConnectedToNetwork = isNetworkAvailable();
-
         btnReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestDetailsViewModel.setDeleted(false);
-                if (isConnectedToNetwork) {
+                if (isNetworkAvailable()) {
                     requestDetailsViewModel.deleteLocationOnline(gameLocationModel);
                 } else {
-                    requestDetailsViewModel.deleteLocationOffline(gameLocationModel);
+                    Toast.makeText(RequestDetailsActivity.this, "Cannot delete a location while offline", Toast.LENGTH_SHORT).show();
                 }
-                Intent i = new Intent(RequestDetailsActivity.this, AdminActivity.class);
-                startActivity(i);
-                finish();
             }
         });
 
-        // TODO: Maybe you don't have to go back to the map..
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(RequestDetailsActivity.this, MainActivity.class);
-//                i.putExtra("acceptingLocation", true);
-//                requestDetailsViewModel.saveToDatabase(gameLocationModel);
-//                i.putExtra("parseGameLocation", gameLocationModel);
-//                startActivity(i);
-//                finish();
+                requestDetailsViewModel.setVerified(false);
+                if (isNetworkAvailable()) {
+                    requestDetailsViewModel.verifyLocation(gameLocationModel);
+                } else {
+                    Toast.makeText(RequestDetailsActivity.this, "Cannot verify a location while offline", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

@@ -46,10 +46,6 @@ public class MainActivity extends AppCompatActivity implements NotFoundDialogFra
             @Override
             public void onChanged(MainModel mainModel) {
                 currentUser = mainModel.getUser();
-                boolean verifyStatus = mainModel.isVerifyStatus();
-                if (verifyStatus) {
-                    Toast.makeText(MainActivity.this, "Request was verified!", Toast.LENGTH_SHORT).show();
-                }
             }
         });
 
@@ -57,17 +53,11 @@ public class MainActivity extends AppCompatActivity implements NotFoundDialogFra
         bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                boolean acceptingLocation = i.getBooleanExtra("acceptingLocation", false);
                 boolean querying = i.getBooleanExtra("querying", false);
                 Fragment fragment;
                 switch (item.getItemId()) {
                     case R.id.action_map:
                         fragment = new MapFragment();
-                        if (acceptingLocation) {
-                            ParseGameLocation parseGameLocation = i.getParcelableExtra("parseGameLocation");
-                            mainViewModel.verifyLocation(parseGameLocation);
-                            i.removeExtra("acceptingLocation");
-                        }
                         if (querying) {
                             String gameTitle = i.getStringExtra("gameTitle");
                             setUpQuery(fragment, gameTitle);

@@ -32,13 +32,19 @@ public class RequestDetailsViewModel extends AndroidViewModel {
         requestDetailsRepo.deleteLocationOnline(gameLocationModel, mutableLiveData);
     }
 
-    public void deleteLocationOffline(GameLocationModel gameLocationModel) {
-        requestDetailsRepo.deleteLocationOffline(gameLocationModel, mutableLiveData);
-    }
-
     public void setDeleted(boolean b) {
         RequestDetailsModel requestDetailsModel = mutableLiveData.getValue();
         requestDetailsModel.setDeleted(b);
+        mutableLiveData.setValue(requestDetailsModel);
+    }
+
+    public void verifyLocation(GameLocationModel gameLocationModel) {
+        requestDetailsRepo.verifyLocation(gameLocationModel, mutableLiveData);
+    }
+
+    public void setVerified(boolean b) {
+        RequestDetailsModel requestDetailsModel = mutableLiveData.getValue();
+        requestDetailsModel.setVerified(b);
         mutableLiveData.setValue(requestDetailsModel);
     }
 }

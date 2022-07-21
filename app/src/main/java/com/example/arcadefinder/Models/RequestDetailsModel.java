@@ -3,11 +3,8 @@ package com.example.arcadefinder.Models;
 import com.parse.ParseFile;
 
 public class RequestDetailsModel {
-    private String title;
-    private String addressText;
-    private String description;
-    private ParseFile image;
     private boolean deleted;
+    private boolean verified;
 
     public boolean isDeleted() {
         return deleted;
@@ -17,35 +14,11 @@ public class RequestDetailsModel {
         this.deleted = deleted;
     }
 
-    public String getTitle() {
-        return title;
+    public boolean isVerified() {
+        return verified;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAddressText() {
-        return addressText;
-    }
-
-    public void setAddressText(String addressText) {
-        this.addressText = addressText;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ParseFile getImage() {
-        return image;
-    }
-
-    public void setImage(ParseFile image) {
-        this.image = image;
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

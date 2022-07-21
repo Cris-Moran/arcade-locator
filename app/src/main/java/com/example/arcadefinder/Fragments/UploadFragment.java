@@ -3,8 +3,12 @@ package com.example.arcadefinder.Fragments;
 import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -76,6 +80,7 @@ public class UploadFragment extends Fragment {
     ParseGeoPoint coordinates;
     String locationName;
     String address;
+    boolean isConnectedToNetwork;
 
     public UploadFragment() {
         // Required empty public constructor
@@ -127,6 +132,10 @@ public class UploadFragment extends Fragment {
         btnSubmitUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isNetworkAvailable()) {
+                    Toast.makeText(getContext(), "Cannot upload while offline", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String gameTitle = etGame.getText().toString();
                 String description = etDescription.getText().toString();
                 uploadViewModel.setUploadStatus(false);
@@ -250,5 +259,15 @@ public class UploadFragment extends Fragment {
             }
         }
     });
+
+    @SuppressWarnings("MissingPermission")
+    // https://stackoverflow.com/a/57284789
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network nw = connectivityManager.getActiveNetwork();
+        if (nw == null) return false;
+        NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
+        return actNw != null && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+    }
 
 }

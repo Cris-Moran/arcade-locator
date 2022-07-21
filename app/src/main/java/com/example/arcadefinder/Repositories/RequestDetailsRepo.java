@@ -14,9 +14,11 @@ import com.example.arcadefinder.R;
 import com.example.arcadefinder.RoomGameLocation;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
@@ -33,44 +35,27 @@ public class RequestDetailsRepo {
     public void deleteLocationOnline(GameLocationModel gameLocationModel, MutableLiveData<RequestDetailsModel> mutableLiveData) {
         ParseQuery<ParseGameLocation> query = ParseQuery.getQuery(ParseGameLocation.class);
         query.whereEqualTo(ParseGameLocation.KEY_ID, gameLocationModel.getId());
-        query.findInBackground(new FindCallback<ParseGameLocation>() {
+        query.getFirstInBackground(new GetCallback<ParseGameLocation>() {
             @Override
-            public void done(List<ParseGameLocation> objects, ParseException e) {
+            public void done(ParseGameLocation object, ParseException e) {
                 if (e != null) {
                     e.printStackTrace();
                     return;
                 }
-                ParseGameLocation location = objects.get(0);
-                location.deleteInBackground(new DeleteCallback() {
+                object.deleteInBackground(new DeleteCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e != null) {
                             e.printStackTrace();
                             return;
                         }
-                        new DeleteLocationAsyncTask(gameLocationDao, new AsyncResponse() {
-                            @Override
-                            public void onFinished() {
-                                RequestDetailsModel requestDetailsModel = mutableLiveData.getValue();
-                                requestDetailsModel.setDeleted(true);
-                                mutableLiveData.setValue(requestDetailsModel);
-                            }
-                        }).execute(gameLocationModel.getId());
+                        RequestDetailsModel requestDetailsModel = mutableLiveData.getValue();
+                        requestDetailsModel.setDeleted(true);
+                        mutableLiveData.setValue(requestDetailsModel);
                     }
                 });
             }
         });
-    }
-
-    public void deleteLocationOffline(GameLocationModel gameLocationModel, MutableLiveData<RequestDetailsModel> mutableLiveData) {
-        new DeleteLocationAsyncTask(gameLocationDao, new AsyncResponse() {
-            @Override
-            public void onFinished() {
-                RequestDetailsModel requestDetailsModel = mutableLiveData.getValue();
-                requestDetailsModel.setDeleted(true);
-                mutableLiveData.setValue(requestDetailsModel);
-            }
-        }).execute(gameLocationModel.getId());
     }
 
     public MutableLiveData<RequestDetailsModel> getRequestDetailsModel() {
@@ -80,29 +65,31 @@ public class RequestDetailsRepo {
         return mutableLiveData;
     }
 
-    private static class DeleteLocationAsyncTask extends AsyncTask<String, Void, Void> {
-        private GameLocationDao gameLocationDao;
-        private AsyncResponse delegate;
-
-        private DeleteLocationAsyncTask(GameLocationDao gameLocationDao, AsyncResponse delegate) {
-            this.gameLocationDao = gameLocationDao;
-            this.delegate = delegate;
-        }
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            gameLocationDao.delete(strings[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            super.onPostExecute(unused);
-            delegate.onFinished();
-        }
-    }
-
-    private interface AsyncResponse {
-        void onFinished();
+    public void verifyLocation(GameLocationModel gameLocationModel, MutableLiveData<RequestDetailsModel> mutableLiveData) {
+        ParseQuery<ParseGameLocation> query = ParseQuery.getQuery(ParseGameLocation.class);
+        query.whereEqualTo(ParseGameLocation.KEY_ID, gameLocationModel.getId());
+        query.findInBackground(new FindCallback<ParseGameLocation>() {
+            @Override
+            public void done(List<ParseGameLocation> objects, ParseException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    return;
+                }
+                ParseGameLocation location = objects.get(0);
+                location.setIsVerified(true);
+                location.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e != null) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        RequestDetailsModel requestDetailsModel = mutableLiveData.getValue();
+                        requestDetailsModel.setVerified(true);
+                        mutableLiveData.setValue(requestDetailsModel);
+                    }
+                });
+            }
+        });
     }
 }
