@@ -119,13 +119,13 @@ public class QueryActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Replace spaces with %20 to make safe for links
-                String encodeTitle = "";
+                String encodedTitle = "";
                 try {
-                    encodeTitle = URLEncoder.encode(s.toString(), "UTF-8").replace("+", "%20");
+                    encodedTitle = URLEncoder.encode(s.toString(), "UTF-8").replace("+", "%20");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", encodeTitle);
+                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", encodedTitle);
                 queryViewModel.getLocations(wikiQueryURL);
             }
 

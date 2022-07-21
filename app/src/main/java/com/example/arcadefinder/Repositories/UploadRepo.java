@@ -1,14 +1,18 @@
 package com.example.arcadefinder.Repositories;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.arcadefinder.Models.UploadModel;
 import com.example.arcadefinder.ParseGameLocation;
 import com.google.android.gms.common.api.Status;
@@ -22,6 +26,14 @@ import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import okhttp3.Headers;
 
 public class UploadRepo {
 
@@ -128,9 +140,22 @@ public class UploadRepo {
         mutableLiveData.setValue(uploadModel);
     }
 
-    public void setCoordinates(ParseGeoPoint coords, MutableLiveData<UploadModel> mutableLiveData) {
-        UploadModel uploadModel = mutableLiveData.getValue();
-        uploadModel.setCoordinates(coords);
-        mutableLiveData.setValue(uploadModel);
+    public void getLocations(String wikiQueryURL, MutableLiveData<UploadModel> mutableLiveData) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(wikiQueryURL, new JsonHttpResponseHandler() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject jsonObject = json.jsonObject;
+                UploadModel uploadModel = mutableLiveData.getValue();
+                uploadModel.setResponse(jsonObject);
+                mutableLiveData.setValue(uploadModel);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.d(TAG, "onFailure");
+            }
+        });
     }
 }

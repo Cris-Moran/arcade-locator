@@ -57,6 +57,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -80,7 +82,6 @@ public class UploadFragment extends Fragment {
     ParseGeoPoint coordinates;
     String locationName;
     String address;
-    boolean isConnectedToNetwork;
 
     public UploadFragment() {
         // Required empty public constructor
@@ -109,7 +110,28 @@ public class UploadFragment extends Fragment {
         uploadViewModel.getUpload().observe(getViewLifecycleOwner(), new Observer<UploadModel>() {
             @Override
             public void onChanged(UploadModel uploadModel) {
-                // https://stackoverflow.com/a/60285340
+                JSONObject jsonObject = uploadModel.getResponse();
+                if (jsonObject != null) {
+                    try {
+                        JSONObject results = jsonObject.getJSONObject("query");
+                        JSONArray search = results.getJSONArray("search");
+                        int iterateLen = 5;
+                        if (search.length() < 5) {
+                            iterateLen = search.length();
+                        }
+                        ArrayList<String> suggestions = new ArrayList<>();
+                        for (int i = 0; i < iterateLen; i++) {
+                            JSONObject item = search.getJSONObject(i);
+                            String title = item.getString("title");
+                            suggestions.add(title);
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, suggestions);
+                        etGame.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
                 coordinates = uploadModel.getCoordinates();
                 locationName = uploadModel.getLocationName();
                 address = uploadModel.getAddress();
@@ -165,41 +187,14 @@ public class UploadFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Replace spaces with %20 to make safe for links
-                String searchQuery = s.toString().replace(" ", "%20");
-                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", searchQuery);
-
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.get(wikiQueryURL, new JsonHttpResponseHandler() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        JSONObject jsonObject = json.jsonObject;
-                        try {
-                            JSONObject results = jsonObject.getJSONObject("query");
-                            JSONArray search = results.getJSONArray("search");
-                            int iterateLen = 5;
-                            if (search.length() < 5) {
-                                iterateLen = search.length();
-                            }
-                            ArrayList<String> suggestions = new ArrayList<>();
-                            for (int i = 0; i < iterateLen; i++) {
-                                JSONObject item = search.getJSONObject(i);
-                                String title = item.getString("title");
-                                suggestions.add(title);
-                            }
-                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, suggestions);
-                            etGame.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.d(TAG, "onFailure");
-                    }
-                });
+                String encodedTitle = "";
+                try {
+                    encodedTitle = URLEncoder.encode(s.toString(), "UTF-8").replace("+", "%20");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", encodedTitle);
+                uploadViewModel.getLocations(wikiQueryURL);
             }
 
             @Override

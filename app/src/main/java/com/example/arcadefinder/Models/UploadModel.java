@@ -4,6 +4,8 @@ import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class UploadModel {
@@ -19,6 +21,7 @@ public class UploadModel {
     private boolean uploadStatus;
     private List<String> autocompleteSuggestions;
     private boolean errorUploading;
+    private JSONObject response;
 
     public List<String> getAutocompleteSuggestions() {
         return autocompleteSuggestions;
@@ -106,5 +109,13 @@ public class UploadModel {
 
     public void setErrorUploading(boolean errorUploading) {
         this.errorUploading = errorUploading;
+    }
+
+    public JSONObject getResponse() {
+        return response;
+    }
+
+    public void setResponse(JSONObject response) {
+        this.response = response;
     }
 }

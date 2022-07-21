@@ -55,7 +55,7 @@ public class UploadViewModel extends AndroidViewModel {
         uploadRepo.setErrorUploading(b, mutableLiveData);
     }
 
-    public void setCoordinates(ParseGeoPoint coords) {
-        uploadRepo.setCoordinates(coords, mutableLiveData);
+    public void getLocations(String wikiQueryURL) {
+        uploadRepo.getLocations(wikiQueryURL, mutableLiveData);
     }
 }
