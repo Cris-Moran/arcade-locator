@@ -29,8 +29,6 @@ public class MapRepo {
         query.whereEqualTo(ParseGameLocation.KEY_VERIFIED, true);
         // get locations with the correct title
         query.whereEqualTo(ParseGameLocation.KEY_TITLE, gameTitle);
-        // limit query to latest 50 items
-        query.setLimit(20);
         // start an asynchronous call for locations
         query.findInBackground(new FindCallback<ParseGameLocation>() {
             @Override

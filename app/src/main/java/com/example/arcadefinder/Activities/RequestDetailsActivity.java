@@ -36,7 +36,6 @@ public class RequestDetailsActivity extends AppCompatActivity {
     Button btnReject;
     Button btnAccept;
     RequestDetailsViewModel requestDetailsViewModel;
-    boolean isConnectedToNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

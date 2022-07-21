@@ -37,8 +37,8 @@ public class AdminViewModel extends AndroidViewModel {
         return mutableLiveData;
     }
 
-    public void queryRequests() {
-        adminRepo.queryRequests(mutableLiveData);
+    public void queryRequests(boolean extendingFeed) {
+        adminRepo.queryRequests(extendingFeed, mutableLiveData);
     }
 
     public void getRequestsOffline() {

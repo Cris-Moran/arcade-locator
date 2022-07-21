@@ -32,19 +32,27 @@ public class AdminRepo {
     final String TAG = getClass().getSimpleName();
 
     private GameLocationDao gameLocationDao;
+    private int offset = 0;
 
     public AdminRepo(Application application) {
         GameLocationDatabase database = GameLocationDatabase.getInstance(application);
         gameLocationDao = database.gameLocationDao();
     }
 
-    public void queryRequests(MutableLiveData<List<GameLocationModel>> mutableLiveData) {
+    public void queryRequests(boolean extendingFeed, MutableLiveData<List<GameLocationModel>> mutableLiveData) {
         // specify what type of data we want to query - Post.class
         ParseQuery<ParseGameLocation> query = ParseQuery.getQuery(ParseGameLocation.class);
         // include data referred by user key
         query.include(ParseGameLocation.KEY_AUTHOR);
         // limit query to latest 20 items
         query.setLimit(20);
+        // for endless scrolling: if we are extending the feed than skip the first 20
+        if (extendingFeed) {
+            offset += 20;
+            query.setSkip(offset);
+        } else {
+            query.setSkip(0);
+        }
         // only get queries that haven't been verified
         query.whereEqualTo(ParseGameLocation.KEY_VERIFIED, false);
         // order posts by creation date (newest first)

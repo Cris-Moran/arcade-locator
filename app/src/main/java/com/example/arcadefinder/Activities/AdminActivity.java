@@ -17,6 +17,7 @@ import android.net.NetworkCapabilities;
 import android.os.Bundle;
 
 import com.example.arcadefinder.Adapters.GameLocationAdapter;
+import com.example.arcadefinder.EndlessRecyclerViewScrollListener;
 import com.example.arcadefinder.Models.GameLocationModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.AdminViewModel;
@@ -30,6 +31,7 @@ public class AdminActivity extends AppCompatActivity {
     protected List<GameLocationModel> locationRequests;
     protected GameLocationAdapter adapter;
     AdminViewModel adminViewModel;
+    private EndlessRecyclerViewScrollListener scrollListener;
     boolean isConnectedToNetwork;
 
     String TAG = getClass().getSimpleName();
@@ -64,10 +66,19 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                adminViewModel.queryRequests(true);
+            }
+        };
+
         isConnectedToNetwork = isNetworkAvailable();
 
         if (isConnectedToNetwork) {
-            adminViewModel.queryRequests();
+            adminViewModel.queryRequests(false);
         } else {
             adminViewModel.getRequestsOffline();
         }
