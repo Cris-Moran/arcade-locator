@@ -4,26 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.arcadefinder.Models.QueryModel;
 import com.example.arcadefinder.R;
 import com.example.arcadefinder.ViewModels.QueryViewModel;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,14 +27,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import okhttp3.Headers;
-
 public class QueryActivity extends AppCompatActivity {
 
     final String TAG = getClass().getSimpleName();
 
     AutoCompleteTextView etGameQuery;
-    Spinner spinnerRadii;
+    AutoCompleteTextView spinnerRadii;
     Button btnSubmitQuery;
     ArrayList<String> suggestions = new ArrayList<>();
     QueryViewModel queryViewModel;
@@ -50,12 +42,11 @@ public class QueryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_query);
         etGameQuery = findViewById(R.id.etGameQuery);
-        spinnerRadii = findViewById(R.id.spinnerRadii);
+        spinnerRadii = findViewById(R.id.radii);
         btnSubmitQuery = findViewById(R.id.btnSubmitQuery);
 
         // https://code.tutsplus.com/tutorials/how-to-add-a-dropdown-menu-in-android-studio--cms-37860
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.radii, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spinnerRadii.setAdapter(adapter);
 
         btnSubmitQuery.setOnClickListener(new View.OnClickListener() {
@@ -65,11 +56,14 @@ public class QueryActivity extends AppCompatActivity {
                     Toast.makeText(QueryActivity.this, "Please type a game", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (spinnerRadii.getText().toString().equals("")) {
+                    Toast.makeText(QueryActivity.this, "Please specify a radius", Toast.LENGTH_SHORT).show();
+                }
                 Intent i = new Intent(QueryActivity.this, MainActivity.class);
                 i.putExtra("gameTitle", etGameQuery.getText().toString());
 
                 // Convert string from drop down into an integer
-                String radiusString = spinnerRadii.getSelectedItem().toString();
+                String radiusString = spinnerRadii.getText().toString();
                 int radius = Integer.parseInt(radiusString.split(" ")[0]);
 
                 ArrayList<String> savedSuggestions = suggestions;
