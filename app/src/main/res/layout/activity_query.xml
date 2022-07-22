@@ -10,46 +10,46 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="25dp"
         android:text="Search For Game"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <AutoCompleteTextView
-        android:id="@+id/etGameQuery"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="56dp"
-        android:completionThreshold="1"
-        android:ems="10"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSubmitQuery"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="Search"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/queryLinearLayout" />
+
+    <LinearLayout
+        android:id="@+id/queryLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:text="Search"
+        android:layout_marginTop="25dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.474"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etGameQuery" />
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
-    <Spinner
-        android:id="@+id/spinnerRadii"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:spinnerMode="dropdown"
-        app:layout_constrainedWidth="false"
-        app:layout_constraintBottom_toBottomOf="@id/etGameQuery"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/etGameQuery"
-        app:layout_constraintTop_toTopOf="@id/etGameQuery"
-        app:layout_constraintVertical_bias="0.0" />
+        <AutoCompleteTextView
+            android:id="@+id/etGameQuery"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:completionThreshold="1" />
+
+        <Spinner
+            android:id="@+id/spinnerRadii"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="end"
+            android:spinnerMode="dropdown" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

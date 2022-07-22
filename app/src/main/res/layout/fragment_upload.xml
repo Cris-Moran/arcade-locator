@@ -10,7 +10,7 @@
         android:id="@+id/tvUploadTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:text="Upload"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,8 +21,8 @@
     <ImageView
         android:id="@+id/ivGamePic"
         android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="56dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="25dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -30,22 +30,24 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:src="@tools:sample/avatars" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnUploadPic"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="25dp"
         android:text="Upload Image"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivGamePic" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSubmitUpload"
-        android:layout_width="165dp"
-        android:layout_height="51dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Submit"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnUploadPic" />
@@ -54,10 +56,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="25dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvUploadTitle">
 
@@ -82,9 +83,10 @@
             android:id="@+id/etGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
+            android:completionThreshold="1"
             android:hint="game"
-            android:completionThreshold="1" />
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/etDescription"
@@ -95,7 +97,8 @@
             android:gravity="start|top"
             android:hint="description"
             android:inputType="textMultiLine"
-            android:maxLength="150" />
+            android:maxLength="150"
+            android:minHeight="48dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
