@@ -13,7 +13,7 @@
     <string name="or_continue_as_guest"><u>Or continue as guest.</u></string>
     <string name="you_are_a_guest_log_in_to_see_your_profile">You are a guest. Log in to see your profileModel and create requests!</string>
     <string name="google_maps_api_key"></string>
-    <string name="hours"><u>Double click for More Info</u></string>
+    <string name="hours"><u>Click for More Info</u></string>
     <string name="preference_file_key">preferences</string>
     <string name="radius">Radius</string>
     <string-array name="radii">
