@@ -10,47 +10,14 @@
         android:id="@+id/tvUploadTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:gravity="center"
         android:text="Upload"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/ivGamePic"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="25dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:src="@tools:sample/avatars" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnUploadPic"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="Upload Image"
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivGamePic" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSubmitUpload"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Submit"
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnUploadPic" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -60,7 +27,8 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUploadTitle">
+        app:layout_constraintTop_toBottomOf="@+id/tvUploadTitle"
+        app:layout_constraintBottom_toTopOf="@id/ivGamePic">
 
 
         <com.google.android.material.card.MaterialCardView
@@ -100,5 +68,42 @@
             android:maxLength="150"
             android:minHeight="48dp" />
     </LinearLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivGamePic"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="25dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@id/btnUploadPic"
+        tools:src="@tools:sample/avatars" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnUploadPic"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="Upload Image"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivGamePic"
+        app:layout_constraintBottom_toTopOf="@id/btnSubmitUpload"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSubmitUpload"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnUploadPic" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
