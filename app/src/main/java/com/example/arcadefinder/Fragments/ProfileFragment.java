@@ -129,6 +129,7 @@ public class ProfileFragment extends Fragment {
                     tvProfileUsername.setText(username);
                 }
 
+                // https://stackoverflow.com/a/52065027
                 if (parseFile != null && parseFile.getUrl() != null) {
                     // Loading image from database if exists
                     Glide.with(getContext()).load(parseFile.getUrl()).apply(new RequestOptions()
