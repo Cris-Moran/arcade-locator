@@ -31,6 +31,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.example.arcadefinder.Activities.AdminActivity;
 import com.example.arcadefinder.Activities.LoginActivity;
 import com.example.arcadefinder.Models.ProfileModel;
@@ -120,7 +123,7 @@ public class ProfileFragment extends Fragment {
 
                 if (isAdmin) {
                     btnAdminSettings.setVisibility(View.VISIBLE);
-                    String adminUsername = username + " [admin]";
+                    String adminUsername = username + " (ADMIN)";
                     tvProfileUsername.setText(adminUsername);
                 } else {
                     tvProfileUsername.setText(username);
@@ -128,13 +131,22 @@ public class ProfileFragment extends Fragment {
 
                 if (parseFile != null && parseFile.getUrl() != null) {
                     // Loading image from database if exists
-                    Glide.with(getContext()).load(parseFile.getUrl()).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+                    Glide.with(getContext()).load(parseFile.getUrl()).apply(new RequestOptions()
+                            .fitCenter()
+                            .format(DecodeFormat.PREFER_ARGB_8888)
+                            .override(Target.SIZE_ORIGINAL)).circleCrop().placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 } else if (url == null) {
                     // Default image
-                    ivProfileImage.setImageResource(R.drawable.defaultpfp);
+                    Glide.with(getContext()).load(R.drawable.defaultpfp).apply(new RequestOptions()
+                            .fitCenter()
+                            .format(DecodeFormat.PREFER_ARGB_8888)
+                            .override(Target.SIZE_ORIGINAL)).circleCrop().into(ivProfileImage);
                 } else {
                     // Updated pfp
-                    Glide.with(getContext()).load(url).placeholder(R.drawable.defaultpfp).into(ivProfileImage);
+                    Glide.with(getContext()).load(url).apply(new RequestOptions()
+                            .fitCenter()
+                            .format(DecodeFormat.PREFER_ARGB_8888)
+                            .override(Target.SIZE_ORIGINAL)).circleCrop().placeholder(R.drawable.defaultpfp).into(ivProfileImage);
                 }
             }
         });
