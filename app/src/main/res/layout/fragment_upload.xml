@@ -28,47 +28,62 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvUploadTitle"
-        app:layout_constraintBottom_toTopOf="@id/etGame"
-        app:strokeColor="@color/black"
-        app:strokeWidth="0.75dip">
+        app:layout_constraintBottom_toTopOf="@id/gameFilledTextField"
+        app:strokeWidth="0.75dip"
+        app:strokeColor="@color/black">
 
         <fragment
             android:id="@+id/fragmentAddress"
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
     </com.google.android.material.card.MaterialCardView>
 
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/gameFilledTextField"
+
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/game_title"
+        app:layout_constraintBottom_toTopOf="@+id/descriptionFilledTextField"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/material_card_view">
+
+    <!--this is the actual edit text which takes the input-->
     <AutoCompleteTextView
         android:id="@+id/etGame"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:completionThreshold="1"
-        android:hint="game"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/material_card_view"
-        app:layout_constraintBottom_toTopOf="@id/etDescription"
-        />
+        style="@style/Widget.MaterialComponents.AutoCompleteTextView.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/etDescription"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/descriptionFilledTextField"
+
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="description"
-        android:inputType="textMultiLine"
-        android:maxLength="150"
-        android:minHeight="48dp"
+        android:hint="Description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etGame"
-        app:layout_constraintBottom_toTopOf="@id/ivGamePic"/>
+        app:layout_constraintTop_toBottomOf="@id/gameFilledTextField"
+        app:layout_constraintBottom_toTopOf="@id/ivGamePic">
+
+        <!--this is the actual edit text which takes the input-->
+        <EditText
+            android:id="@+id/etDescription"
+            style="@style/Widget.MaterialComponents.AutoCompleteTextView.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/ivGamePic"
@@ -78,10 +93,9 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDescription"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionFilledTextField"
         app:layout_constraintBottom_toTopOf="@id/btnUploadPic"
         tools:src="@tools:sample/avatars" />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnUploadPic"
