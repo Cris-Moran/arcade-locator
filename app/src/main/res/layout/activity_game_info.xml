@@ -11,22 +11,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="60dp"
         android:layout_marginEnd="25dp"
         android:gravity="center"
         android:text="TextView"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/ivMapGameImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageView
         android:id="@+id/ivMapGameImage"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvMapGameAddress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMapGameTitle"
         tools:srcCompat="@tools:sample/avatars" />
@@ -36,12 +37,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="48dp"
         android:layout_marginEnd="25dp"
         android:gravity="center"
         android:text="TextView"
+        android:layout_marginTop="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvMapGameUserDesc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivMapGameImage" />
 
@@ -50,12 +51,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="48dp"
         android:layout_marginEnd="25dp"
         android:gravity="center"
         android:text="TextView"
+        android:layout_marginTop="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvGameWiki"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMapGameAddress" />
 
@@ -64,14 +66,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="48dp"
         android:layout_marginEnd="25dp"
         android:autoLink="web"
         android:gravity="center"
         android:text="TextView"
         android:textColorHighlight="@color/clear"
+        android:layout_marginTop="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMapGameUserDesc" />
 </androidx.constraintlayout.widget.ConstraintLayout>

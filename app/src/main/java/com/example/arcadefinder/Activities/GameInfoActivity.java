@@ -45,9 +45,9 @@ public class GameInfoActivity extends AppCompatActivity {
             public void onChanged(GameInfoModel gameInfoModel) {
                 String title = gameInfoModel.getTitle();
                 ParseFile image = gameInfoModel.getImage();
-                String address = gameInfoModel.getAddress();
+                String address = gameInfoModel.getLocationName() + "\n" + gameInfoModel.getAddress();
                 String userDesc = gameInfoModel.getUserDesc();
-                String wikiUrl = "More Info:\nhttp://en.wikipedia.org/wiki/" + gameInfoModel.getEncodeTitle();
+                String wikiUrl = "Game Info:\nhttp://en.wikipedia.org/wiki/" + gameInfoModel.getEncodeTitle();
 
                 tvMapGameTitle.setText(title);
                 Glide.with(GameInfoActivity.this).load(image.getUrl()).into(ivMapGameImage);

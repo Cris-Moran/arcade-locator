@@ -35,12 +35,6 @@ public class MapViewModel extends ViewModel {
         mapRepo.queryLocations(gameTitle, radius, currentLocation, mutableLiveData);
     }
 
-    public void setLocationPermission(boolean b) {
-        MapModel mapModel = mutableLiveData.getValue();
-        mapModel.setLocationPermission(b);
-        mutableLiveData.setValue(mapModel);
-    }
-
     public HashMap<String, Object> getLocationFields(ParseGameLocation parseGameLocation) {
         return mapRepo.getLocationFields(parseGameLocation);
     }

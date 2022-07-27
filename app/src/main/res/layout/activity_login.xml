@@ -9,46 +9,84 @@
         android:id="@+id/tvLoginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
         android:text="@string/login"
-        android:textSize="20sp"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/usernameFilledTextField"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
-    <EditText
-        android:id="@+id/etUsername"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/usernameFilledTextField"
+
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+        android:layout_width="225dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:ems="10"
-        android:hint="username"
-        android:inputType="textPersonName"
+        android:layout_marginTop="25dp"
+        android:hint="Username"
+        app:layout_constraintBottom_toTopOf="@+id/passwordFilledTextField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLoginTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLoginTitle">
 
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/etUsername"
+            style="@style/Widget.MaterialComponents.AutoCompleteTextView.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordFilledTextField"
+
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+        android:layout_width="225dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:ems="10"
-        android:hint="password"
-        android:inputType="textPassword"
+        android:layout_marginTop="25dp"
+        android:hint="@string/password"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/usernameFilledTextField"
+        app:passwordToggleEnabled="true">
 
-    <Button
+        <EditText
+            android:id="@+id/etPassword"
+            style="@style/Widget.MaterialComponents.AutoCompleteTextView.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="25dp"
         android:text="Login"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvNotRegistered"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordFilledTextField" />
+
+    <TextView
+        android:id="@+id/tvNotRegistered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="@string/not_registered"
+        app:layout_constraintBottom_toTopOf="@+id/tvRegisterHere"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <TextView
         android:id="@+id/tvRegisterHere"
@@ -56,31 +94,22 @@
         android:layout_height="wrap_content"
         android:text="@string/register_here"
         android:textColor="@color/link_blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/tvContinueGuest"
+        app:layout_constraintEnd_toEndOf="@id/tvNotRegistered"
+        app:layout_constraintStart_toStartOf="@id/tvNotRegistered"
         app:layout_constraintTop_toBottomOf="@+id/tvNotRegistered" />
-
-    <TextView
-        android:id="@+id/tvNotRegistered"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:text="@string/not_registered"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <TextView
         android:id="@+id/tvContinueGuest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="25dp"
         android:text="@string/or_continue_as_guest"
         android:textColor="@color/link_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvRegisterHere"
-        app:layout_constraintVertical_bias="0.011" />
+        app:layout_constraintTop_toBottomOf="@+id/tvRegisterHere" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

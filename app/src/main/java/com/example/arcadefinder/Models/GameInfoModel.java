@@ -6,6 +6,7 @@ public class GameInfoModel {
     private String title;
     private ParseFile image;
     private String address;
+    private String locationName;
     private String userDesc;
     private String encodeTitle;
 
@@ -31,6 +32,14 @@ public class GameInfoModel {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     public String getUserDesc() {

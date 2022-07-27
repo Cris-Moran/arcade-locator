@@ -69,7 +69,7 @@ public class MapRepo {
         double lng = coordinates.getLongitude();
         LatLng markerLocation = new LatLng(lat, lng);
         String gameTitle = parseGameLocation.getTitle();
-        String address = parseGameLocation.getAddress();
+        String address = parseGameLocation.getLocationName() + "\n" +  parseGameLocation.getAddress();
 
         locationFields.put("markerLocation", markerLocation);
         locationFields.put("gameTitle", gameTitle);

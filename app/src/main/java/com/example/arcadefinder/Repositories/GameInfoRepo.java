@@ -14,6 +14,7 @@ public class GameInfoRepo {
         String title = parseGameLocation.getTitle();
         ParseFile image = parseGameLocation.getImage();
         String address = parseGameLocation.getAddress();
+        String locationName = parseGameLocation.getLocationName();
         String userDesc = parseGameLocation.getDescription();
         String encodeTitle = "";
         try {
@@ -26,6 +27,7 @@ public class GameInfoRepo {
         gameInfoModel.setTitle(title);
         gameInfoModel.setImage(image);
         gameInfoModel.setAddress(address);
+        gameInfoModel.setLocationName(locationName);
         gameInfoModel.setUserDesc(userDesc);
         gameInfoModel.setEncodeTitle(encodeTitle);
 
