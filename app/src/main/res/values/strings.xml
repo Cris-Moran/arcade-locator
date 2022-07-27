@@ -16,6 +16,7 @@
     <string name="preference_file_key">preferences</string>
     <string name="radius">Radius</string>
     <string name="game_title">Game Title</string>
+    <string name="report">Report</string>
     <string-array name="radii">
         <item>5 mi</item>
         <item>10 mi</item>
