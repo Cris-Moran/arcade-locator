@@ -187,14 +187,16 @@ public class UploadFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Replace spaces with %20 to make safe for links
-                String encodedTitle = "";
-                try {
-                    encodedTitle = URLEncoder.encode(s.toString(), "UTF-8").replace("+", "%20");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                if (!s.toString().equals("")) {
+                    String encodedTitle = "";
+                    try {
+                        encodedTitle = URLEncoder.encode(s.toString(), "UTF-8").replace("+", "%20");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", encodedTitle);
+                    uploadViewModel.getLocations(wikiQueryURL);
                 }
-                String wikiQueryURL = String.format("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s+incategory:Arcade_video_games&format=json", encodedTitle);
-                uploadViewModel.getLocations(wikiQueryURL);
             }
 
             @Override
